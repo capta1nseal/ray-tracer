@@ -10,3 +10,9 @@ It then follows that the priorities of this project are:
 ## project state
 
 The skeletons of what is to come are being constructed, and soon they may create the skeleton of an image in the command line.
+
+### geometry
+
+For now, the following definitions are used as geometric ground truth:
+- an orientation of 0,0,0 (roll,pitch,yaw) is towards positive x, with positive y to the right, and positive z up
+- in 3D directions, azimuth is a synonym for yaw, altitude is a synonym for pitch

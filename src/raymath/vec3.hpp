@@ -2,6 +2,12 @@
 #define _RAYTRACERVEC3_
 
 
+#include <ostream>
+
+struct Direction;
+struct Orientation;
+
+
 /*
 Basic 3D vector.
 Sanitised constructor inputs, other float inputs (including operator overloads) could cause problems.
@@ -13,6 +19,8 @@ struct Vec3
     float z;
 
     Vec3(float initX = 0.0f, float initY = 0.0f, float initZ = 0.0f);
+    Vec3(const Direction& direction);
+    Vec3(const Orientation& orientation);
 
     bool operator==(const Vec3& other) const;
 
@@ -39,6 +47,8 @@ struct Vec3
 
     void normalize();
     Vec3 normalized() const;
+
+    friend std::ostream& operator<<(std::ostream& os, const Vec3& vec3);
 };
 
 

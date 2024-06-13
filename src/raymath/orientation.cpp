@@ -3,6 +3,8 @@
 
 #include <ostream>
 
+#include "direction.hpp"
+
 
 #include <cmath>
 #include <math.h>
@@ -11,10 +13,6 @@
 const float pi = M_PI;
 
 
-Orientation::Orientation()
-{
-    roll = pitch = yaw = 0.0f;
-}
 Orientation::Orientation(float initRoll, float initPitch, float initYaw)
     : roll(initRoll), pitch(initPitch), yaw(initYaw)
 {
@@ -25,6 +23,10 @@ Orientation::Orientation(float initRoll, float initPitch, float initYaw)
     roll = std::fmod(roll, pi);
     pitch = std::fmod(pitch, pi);
     yaw = std::fmod(yaw, pi);
+}
+Orientation::Orientation(const Direction& direction)
+    : Orientation(0.0f, direction.altitude, direction.azimuth)
+{
 }
 
 std::ostream& operator<<(std::ostream& os, const Orientation& orientation)

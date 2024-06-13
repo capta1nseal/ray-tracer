@@ -4,6 +4,8 @@
 #include <chrono>
 #include <iostream>
 
+#include "raymath/raymath.hpp"
+
 
 RayTracerApplication::RayTracerApplication()
 {   
@@ -19,6 +21,9 @@ void RayTracerApplication::run()
     while (running)
     {
         frameCount++;
+
+        std::cout << Vec3(Orientation(3.141f / 4.0f, 3.141f / 4.0f, 3.141f / 4.0f)) << "\n";
+
 
         if (frameCount >= 100) running = false;
     }

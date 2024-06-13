@@ -4,6 +4,8 @@
 
 #include <ostream>
 
+struct Orientation;
+
 
 /*
 azimuth and altitude will be between -pi and pi.
@@ -16,8 +18,8 @@ struct Direction
     float azimuth;
     float altitude;
 
-    Direction();
-    Direction(float initAzimuth, float initAltitude);
+    Direction(float initAzimuth = 0.0f, float initAltitude = 0.0f);
+    Direction(const Orientation& orientation);
 
     // outputs formatted direction to out stream
     friend std::ostream& operator<<(std::ostream& os, const Direction& direction);
