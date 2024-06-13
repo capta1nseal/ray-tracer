@@ -17,7 +17,6 @@ class Ray
 public:
     Ray();
     Ray(const Point& initOrigin, const Direction& initDirection);
-    Ray(float initX, float initY, float initZ, float initAzimuth, float initAltitude);
 
     // outputs formatted origin-direction pair to out stream
     friend std::ostream& operator<<(std::ostream& os, const Ray& ray);

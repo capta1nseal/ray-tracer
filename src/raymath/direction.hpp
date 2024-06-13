@@ -9,6 +9,7 @@
 azimuth and altitude will be between -pi and pi.
 Any value passed into the initializer will be converted correctly from rad to rad.
 Do conversions between degrees and rad yourself.
+Ensures values are normal fp values.
 */
 struct Direction
 {

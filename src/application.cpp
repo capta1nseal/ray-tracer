@@ -4,8 +4,6 @@
 #include <chrono>
 #include <iostream>
 
-#include "raymath/raymath.hpp"
-
 
 RayTracerApplication::RayTracerApplication()
 {   

@@ -5,6 +5,7 @@
 
 
 #include <cmath>
+#include <math.h>
 
 
 const float pi = M_PI;
@@ -17,8 +18,8 @@ Direction::Direction()
 Direction::Direction(float initAzimuth, float initAltitude)
     : azimuth(initAzimuth), altitude(initAltitude)
 {
-    if (azimuth != azimuth) azimuth = 0.0f;
-    if (altitude != altitude) altitude = 0.0f;
+    if (!isnormal(azimuth)) azimuth = 0.0f;
+    if (!isnormal(altitude)) altitude = 0.0f;
 
     // TODO verify that fmod behaves as expected here
     azimuth = std::fmod(azimuth, pi);

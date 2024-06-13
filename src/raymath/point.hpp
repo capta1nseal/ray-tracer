@@ -6,8 +6,8 @@
 
 
 /*
-trivial 3D point.
-constructor should sanitise NaN.
+Trivial 3D point.
+Ensures values are normal fp values.
 */
 struct Point
 {

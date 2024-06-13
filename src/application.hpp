@@ -3,7 +3,7 @@
 
 
 /*
-A wrapper class doing nothing but guiding the execution of the program.
+A wrapper class initializing and facilitating the execution of the program.
 */
 class RayTracerApplication
 {
