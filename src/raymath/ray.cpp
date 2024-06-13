@@ -7,11 +7,6 @@
 #include "direction.hpp"
 
 
-Ray::Ray()
-{
-    origin = Point();
-    direction = Direction();
-}
 Ray::Ray(const Point& initOrigin, const Direction& initDirection)
     : origin(initOrigin), direction(initDirection)
 {

@@ -5,6 +5,9 @@
 #include "raymath/raymath.hpp"
 
 
+/*
+Wrapper for camera's spatial positioning and lens values.
+*/
 class Camera
 {
 public:
@@ -12,6 +15,7 @@ public:
         const Point& initPosition = Point(), const Orientation& initOrientation = Orientation(),
         float initFocalLength = 50.0f, float initLensDiameter = 30.0f
     );
+    Camera(const Ray& initRay = Ray(), float initFocalLength = 50.0f, float initLensDiameter = 30.0f);
 
 private:
     Point position;

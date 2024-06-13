@@ -12,18 +12,15 @@
 Encapsulates an origin point and direction.
 Also implements some relevant mathematical operations.
 */
-class Ray
+struct Ray
 {
-public:
-    Ray();
-    Ray(const Point& initOrigin, const Direction& initDirection);
+    Point origin;
+    Direction direction;
+
+    Ray(const Point& initOrigin = Point(), const Direction& initDirection = Direction());
 
     // outputs formatted origin-direction pair to out stream
     friend std::ostream& operator<<(std::ostream& os, const Ray& ray);
-
-private:
-    Point origin;
-    Direction direction;
 };
 
 
