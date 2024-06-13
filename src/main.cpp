@@ -1,6 +1,11 @@
-#include <iostream>
+#include "application.hpp"
+
 
 int main()
 {
-    std::cout << "Hello World! Time for some ray traced rendering :)\n";
+    auto application = RayTracerApplication();
+
+    application.run();
+
+    return 0;
 }
