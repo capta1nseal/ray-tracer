@@ -1,1 +1,7 @@
+# build-related directories
+bin/
+obj/
+dep/
+
+# random IDE cleanup
 .vscode/
