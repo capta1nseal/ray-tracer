@@ -4,10 +4,10 @@
 
 /*
 Wrapper header for all ray math headers.
+Headers in this directory shouldn't include other headers from this project, to avoid cross-inclusion issues
 */
 
 
-#include "point.hpp"
 #include "direction.hpp"
 #include "orientation.hpp"
 #include "vec3.hpp"

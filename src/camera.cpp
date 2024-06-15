@@ -7,13 +7,13 @@
 #include <math.h>
 
 
-Camera::Camera(const Point& initPosition, const Orientation& initOrientation, float initFocalLength, float initLensDiameter)
-    : position(initPosition), orientation(initOrientation), focalLength(initFocalLength), lensDiameter(initLensDiameter)
+Camera::Camera(const Point& initPosition, const Orientation& initOrientation, float initFocalLength, float initNearClip, float initAspectRatio, float initHorizontalFOV)
+    : position(initPosition), orientation(initOrientation), focalLength(initFocalLength), nearClip(initNearClip), aspectRatio(initAspectRatio), horizontalFOV(initHorizontalFOV)
 {
-    if (!isnormal(focalLength)) focalLength = 0.0f;
-    if (!isnormal(lensDiameter)) lensDiameter = 0.0f;
-}
-Camera::Camera(const Ray& initRay, float initFocalLength, float initLensDiameter)
-    : Camera(initRay.origin, Orientation(0.0f, initRay.direction.altitude, initRay.direction.azimuth), initFocalLength, initLensDiameter)
-{
+    if (!isnormal(focalLength)) focalLength = 50.0f;
+    if (!isnormal(nearClip)) nearClip = 0.01f;
+    if (!isnormal(aspectRatio)) aspectRatio = 16.0f/9.0f;
+    if (!isnormal(horizontalFOV)) horizontalFOV = M_PI * 0.3f;
+
+    verticalFOV = horizontalFOV / aspectRatio;
 }

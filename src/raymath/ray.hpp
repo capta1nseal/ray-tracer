@@ -4,8 +4,7 @@
 
 #include <ostream>
 
-#include "point.hpp"
-#include "direction.hpp"
+struct Vec3;
 
 
 /*
@@ -14,10 +13,9 @@ Also implements some relevant mathematical operations.
 */
 struct Ray
 {
-    Point origin;
-    Direction direction;
+    Vec3 origin, direction;
 
-    Ray(const Point& initOrigin = Point(), const Direction& initDirection = Direction());
+    Ray(const Vec3& initOrigin = Vec3(), const Vec3& initDirection = Vec3());
 
     // outputs formatted origin-direction pair to out stream
     friend std::ostream& operator<<(std::ostream& os, const Ray& ray);

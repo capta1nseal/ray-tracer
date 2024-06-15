@@ -2,6 +2,8 @@
 #define _RAYTRACERCAMERA_
 
 
+#include <math.h>
+
 #include "raymath/raymath.hpp"
 
 
@@ -12,17 +14,21 @@ class Camera
 {
 public:
     Camera(
-        const Point& initPosition = Point(), const Orientation& initOrientation = Orientation(),
-        float initFocalLength = 50.0f, float initLensDiameter = 30.0f
+        const Vec3& initPosition = Vec3(), const Orientation& initOrientation = Orientation(),
+        float initFocalLength = 50.0f, float initNearClip = 0.01f,
+        float initAspectRatio = 16.0f/9.0f, float initHorizontalFOV = M_PI * 0.3f
     );
-    Camera(const Ray& initRay = Ray(), float initFocalLength = 50.0f, float initLensDiameter = 30.0f);
 
 private:
-    Point position;
+    Vec3 position;
     Orientation orientation;
-    // lengths in mm
+    // lengths in m
+    // angles in rad
     float focalLength;
-    float lensDiameter;
+    float nearClip;
+    float aspectRatio;
+    float horizontalFOV;
+    float verticalFOV;
 };
 
 

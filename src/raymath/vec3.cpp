@@ -59,6 +59,7 @@ Vec3 Vec3::operator*(const float& scalar) const
 }
 Vec3 Vec3::operator/(const float& scalar) const
 {
+    if (scalar == 0.0f) return Vec3();
     return Vec3(x / scalar, y / scalar, z / scalar);
 }
 
@@ -96,6 +97,7 @@ void Vec3::operator*=(const float& scalar)
 }
 void Vec3::operator/=(const float& scalar)
 {
+    if (scalar == 0.0f) return;
     x /= scalar;
     y /= scalar;
     z /= scalar;
@@ -109,6 +111,7 @@ float Vec3::operator()() const
 void Vec3::normalize()
 {
     float length = (*this)();
+    if (length == 0.0f) return;
     x /= length;
     y /= length;
     z /= length;
@@ -116,6 +119,7 @@ void Vec3::normalize()
 Vec3 Vec3::normalized() const
 {
     float length = (*this)();
+    if (length == 0.0f) return Vec3();
     return Vec3(x / length, y / length, z / length);
 }
 

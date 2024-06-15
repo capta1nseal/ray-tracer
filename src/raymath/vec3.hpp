@@ -14,9 +14,7 @@ Sanitised constructor inputs, other float inputs (including operator overloads) 
 */
 struct Vec3
 {
-    float x;
-    float y;
-    float z;
+    float x, y, z;
 
     Vec3(float initX = 0.0f, float initY = 0.0f, float initZ = 0.0f);
     Vec3(const Direction& direction);

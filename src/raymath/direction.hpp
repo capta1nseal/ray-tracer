@@ -15,8 +15,7 @@ Ensures values are normal fp values.
 */
 struct Direction
 {
-    float azimuth;
-    float altitude;
+    float azimuth, altitude;
 
     Direction(float initAzimuth = 0.0f, float initAltitude = 0.0f);
     Direction(const Orientation& orientation);

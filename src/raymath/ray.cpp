@@ -3,11 +3,10 @@
 
 #include <ostream>
 
-#include "point.hpp"
-#include "direction.hpp"
+#include "vec3.hpp"
 
 
-Ray::Ray(const Point& initOrigin, const Direction& initDirection)
+Ray::Ray(const Vec3& initOrigin, const Vec3& initDirection)
     : origin(initOrigin), direction(initDirection)
 {
 }
