@@ -1,11 +1,9 @@
 #include "camera.hpp"
 
 
-#include "raymath/raymath.hpp"
-
-
 #include <math.h>
-#include <iostream>
+
+#include "raymath/raymath.hpp"
 
 
 Camera::Camera(

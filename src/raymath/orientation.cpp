@@ -2,12 +2,10 @@
 
 
 #include <ostream>
-
-#include "direction.hpp"
-
-
 #include <cmath>
 #include <math.h>
+
+#include "direction.hpp"
 
 
 const float pi = M_PI;

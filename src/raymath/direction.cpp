@@ -2,13 +2,11 @@
 
 
 #include <ostream>
+#include <cmath>
+#include <math.h>
 
 #include "orientation.hpp"
 #include "vec3.hpp"
-
-
-#include <cmath>
-#include <math.h>
 
 
 const float pi = M_PI;

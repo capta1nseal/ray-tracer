@@ -1,11 +1,9 @@
 #include "plane.hpp"
 
 
-#include "../raymath/raymath.hpp"
-
-
 #include <math.h>
-#include <iostream>
+
+#include "../raymath/raymath.hpp"
 
 
 Plane::Plane(const Vec3& initCorner, const Vec3& initEdge1, const Vec3& initEdge2)

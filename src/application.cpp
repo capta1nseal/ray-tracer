@@ -26,7 +26,7 @@ void RayTracerApplication::run()
         auto camera = Camera(
             Vec3( 0.0, 0.0, 0.0),
             Orientation( 0.0, 0.0, 0.0),
-            16 * 4, 9 * 4
+            16 * 3, 9 * 3
         );
 
         auto plane = Plane(

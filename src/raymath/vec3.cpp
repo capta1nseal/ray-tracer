@@ -1,12 +1,12 @@
 #include "vec3.hpp"
 
 
+#include <ostream>
+#include <math.h>
+
 #include "direction.hpp"
 #include "orientation.hpp"
 
-
-#include <math.h>
-#include <iostream>
 
 Vec3::Vec3(float initX, float initY, float initZ)
     : x(initX), y(initY), z(initZ)
