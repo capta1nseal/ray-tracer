@@ -11,6 +11,12 @@ Ray::Ray(const Vec3& initOrigin, const Vec3& initDirection)
 {
 }
 
+float Ray::distanceToPoint(const Vec3& point) const
+{
+    // TODO implement or delete
+    return 0.0f;
+}
+
 std::ostream& operator<<(std::ostream& os, const Ray& ray)
 {
     os << ray.origin << "," << ray.direction;

@@ -5,6 +5,7 @@
 #include <ostream>
 
 struct Orientation;
+struct Vec3;
 
 
 /*
@@ -19,6 +20,7 @@ struct Direction
 
     Direction(float initAzimuth = 0.0f, float initAltitude = 0.0f);
     Direction(const Orientation& orientation);
+    Direction(const Vec3& direction);
 
     // outputs formatted direction to out stream
     friend std::ostream& operator<<(std::ostream& os, const Direction& direction);

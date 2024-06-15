@@ -5,6 +5,7 @@
 
 
 #include <math.h>
+#include <iostream>
 
 
 Camera::Camera(
@@ -33,7 +34,10 @@ Camera::Camera(
     targetPlane = getTargetPlane();
 }
 
-Plane Camera::getTargetPlane()
+float Camera::getWidth() const {return width;}
+float Camera::getHeight() const {return height;}
+
+Plane Camera::getTargetPlane() const
 {
     float toPlane = 1.0f;
     float toLeft = toPlane * tan(horizontalFOV / 2.0f);
@@ -56,5 +60,12 @@ Plane Camera::getTargetPlane()
     Vec3 upVec = Vec3(Direction(orientation.yaw, orientation.pitch + M_PI / 2.0f));
     Vec3 rightVec = Vec3(Direction(orientation.yaw + M_PI / 2.0f, orientation.pitch));
 
-    return Plane(corner, upVec * planeHeight, rightVec * planeWidth);
+    return Plane(corner, rightVec * planeWidth, upVec * planeHeight);
+}
+
+Ray Camera::getRayToPixel(unsigned int x, unsigned int y) const
+{
+    auto target = targetPlane.corner + targetPlane.edge1 * ((static_cast<float>(x) + 0.5f) / static_cast<float>(width)) + targetPlane.edge2 * ((static_cast<float>(y) + 0.5f) / static_cast<float>(height));
+    auto toTarget = target - position;
+    return Ray(position, toTarget);
 }

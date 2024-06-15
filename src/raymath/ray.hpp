@@ -18,6 +18,9 @@ struct Ray
     // initDirection will be normalized.
     Ray(const Vec3& initOrigin = Vec3(), const Vec3& initDirection = Vec3(1.0f, 0.0f, 0.0f));
 
+    // Distance to a point, ensure they're in the same coordinate system.
+    float distanceToPoint(const Vec3& point) const;
+
     // outputs formatted origin,direction pair to out stream.
     friend std::ostream& operator<<(std::ostream& os, const Ray& ray);
 };

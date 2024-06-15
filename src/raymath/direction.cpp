@@ -4,6 +4,7 @@
 #include <ostream>
 
 #include "orientation.hpp"
+#include "vec3.hpp"
 
 
 #include <cmath>
@@ -26,6 +27,12 @@ Direction::Direction(float initAzimuth, float initAltitude)
 Direction::Direction(const Orientation& orientation)
     : Direction(orientation.yaw, orientation.pitch)
 {    
+}
+Direction::Direction(const Vec3& direction)
+{
+    altitude = asin(direction.z);
+
+    azimuth = asin(direction.y / sqrt(direction.x * direction.x + direction.y * direction.y));
 }
 
 std::ostream& operator<<(std::ostream& os, const Direction& direction)

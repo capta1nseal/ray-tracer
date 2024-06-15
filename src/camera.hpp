@@ -20,7 +20,12 @@ public:
         float initHorizontalFOV = 55.0*M_PI/180.0
     );
 
-    Plane getTargetPlane();
+    float getWidth() const;
+    float getHeight() const;
+
+    Plane getTargetPlane() const;
+
+    Ray getRayToPixel(unsigned int x, unsigned int y) const;
 
 private:
     Vec3 position;

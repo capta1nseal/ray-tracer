@@ -23,18 +23,30 @@ void RayTracerApplication::run()
     {
         frameCount++;
 
-        auto camera = Camera();
-
-        auto plane = camera.getTargetPlane();
-
-        auto ray = Ray(
-            Vec3(-6.9f, 0.5f,-0.5f),
-            Vec3( 6.9f,-0.1f, 0.1f)
+        auto camera = Camera(
+            Vec3( 0.0, 0.0, 0.0),
+            Orientation( 0.0, 0.0, 0.0),
+            16 * 4, 9 * 4
         );
 
-        std::cout << "Intersection distance: " << plane.intersectRay(ray) << "\n";
+        auto plane = Plane(
+            Vec3(10.0f, 0.0f,-2.0f),
+            Vec3( 0.0f, 2.0f, 2.0f),
+            Vec3( 0.0f,-2.0f, 2.0f)
+        );
 
-        if (frameCount >= 100) running = false;
+        for (unsigned int y = camera.getHeight(); y > 0; y--)
+        {
+            for (unsigned int x = 0; x < camera.getWidth(); x++)
+            {
+                float distance = plane.intersectRay(camera.getRayToPixel(x, y));
+                if (distance <= 0.0f) std::cout << "  ";
+                else std::cout << "@@";
+            }
+            std::cout << "|\n";
+        }
+
+        if (frameCount >= 1) running = false;
     }
 
     auto frameDuration = (clock.now() - start).count() / static_cast<double>(frameCount);
