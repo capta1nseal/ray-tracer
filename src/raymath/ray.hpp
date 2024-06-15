@@ -4,7 +4,7 @@
 
 #include <ostream>
 
-struct Vec3;
+#include "vec3.hpp"
 
 
 /*

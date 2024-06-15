@@ -6,16 +6,19 @@
 
 
 /*
-Geometric rectangle on a plane.
+Geometric parallelogram on a plane.
 Implements boolean ray intersection check.
 */
 struct Plane
 {
-    Vec3 center, normal;
-    // width, height in m
-    float width, height;
+    // Position of one rectangle corner from world origin. Acts as origin for edge1 and edge2.
+    Vec3 corner;
+    // Represents two parallel edges with origins of corner and corner + edge2.
+    Vec3 edge1;
+    // Represents two parallel edges with origins of corner and corner + edge1.
+    Vec3 edge2;
 
-    Plane(const Vec3& initCenter = Vec3(), const Vec3& initNormal = Vec3(), float width = 2.0f, float height = 2.0f);
+    Plane(const Vec3& initCorner = Vec3(), const Vec3& initEdge1 = Vec3(), const Vec3& initEdge2 = Vec3());
 
     bool intersectRay(const Ray& ray);
 };

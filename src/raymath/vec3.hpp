@@ -11,6 +11,7 @@ struct Orientation;
 /*
 Basic 3D vector.
 Sanitised constructor inputs, other float inputs (including operator overloads) could cause problems.
+Any attempt to divide by zero, including zero length normalization, will result in zero.
 */
 struct Vec3
 {
@@ -29,7 +30,11 @@ struct Vec3
     Vec3 operator-(const float& scalar) const;
 
     Vec3 operator*(const float& scalar) const;
+    float operator*(const Vec3& other) const;
+
     Vec3 operator/(const float& scalar) const;
+
+    Vec3 operator%(const Vec3& other) const;
 
     void operator+=(const Vec3& other);
     void operator+=(const float& scalar);
@@ -40,8 +45,11 @@ struct Vec3
     void operator*=(const float& scalar);
     void operator/=(const float& scalar);
 
-    // magnitude
+    // empty parantheses operator is magnitude
     float operator()() const;
+
+    float dot(const Vec3& other) const;
+    Vec3 cross(const Vec3& other) const;
 
     void normalize();
     Vec3 normalized() const;

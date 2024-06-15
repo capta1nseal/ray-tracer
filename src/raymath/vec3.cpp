@@ -57,10 +57,21 @@ Vec3 Vec3::operator*(const float& scalar) const
 {
     return Vec3(x * scalar, y * scalar, z * scalar);
 }
+// operator* with Vec3 is dot product, cross product is operator%
+float Vec3::operator*(const Vec3& other) const
+{
+    return this->dot(other);
+}
+
 Vec3 Vec3::operator/(const float& scalar) const
 {
     if (scalar == 0.0f) return Vec3();
     return Vec3(x / scalar, y / scalar, z / scalar);
+}
+// operator% with Vec3 is cross product, dot product is operator*
+Vec3 Vec3::operator%(const Vec3& other) const
+{
+    return this->cross(other);
 }
 
 void Vec3::operator+=(const Vec3& other)
@@ -106,6 +117,19 @@ void Vec3::operator/=(const float& scalar)
 float Vec3::operator()() const
 {
     return sqrtf32(x * x + y * y + z * z);
+}
+
+float Vec3::dot(const Vec3& other) const
+{
+    return x * other.x + y * other.y + z * other.z;
+}
+Vec3 Vec3::cross(const Vec3& other) const
+{
+    return Vec3(
+        y * other.z - z * other.y,
+        z * other.x - x * other.z,
+        x * other.y - y * other.x
+    );
 }
 
 void Vec3::normalize()

@@ -7,7 +7,7 @@
 #include <math.h>
 
 
-Camera::Camera(const Point& initPosition, const Orientation& initOrientation, float initFocalLength, float initNearClip, float initAspectRatio, float initHorizontalFOV)
+Camera::Camera(const Vec3& initPosition, const Orientation& initOrientation, float initFocalLength, float initNearClip, float initAspectRatio, float initHorizontalFOV)
     : position(initPosition), orientation(initOrientation), focalLength(initFocalLength), nearClip(initNearClip), aspectRatio(initAspectRatio), horizontalFOV(initHorizontalFOV)
 {
     if (!isnormal(focalLength)) focalLength = 50.0f;
