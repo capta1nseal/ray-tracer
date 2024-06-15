@@ -15,9 +15,10 @@ struct Ray
 {
     Vec3 origin, direction;
 
-    Ray(const Vec3& initOrigin = Vec3(), const Vec3& initDirection = Vec3());
+    // initDirection will be normalized.
+    Ray(const Vec3& initOrigin = Vec3(), const Vec3& initDirection = Vec3(1.0f, 0.0f, 0.0f));
 
-    // outputs formatted origin-direction pair to out stream
+    // outputs formatted origin,direction pair to out stream.
     friend std::ostream& operator<<(std::ostream& os, const Ray& ray);
 };
 

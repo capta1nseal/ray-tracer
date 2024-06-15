@@ -5,6 +5,7 @@
 #include <iostream>
 
 #include "geometry/plane.hpp"
+#include "camera.hpp"
 
 
 RayTracerApplication::RayTracerApplication()
@@ -22,18 +23,14 @@ void RayTracerApplication::run()
     {
         frameCount++;
 
-        auto plane = Plane(
-            Vec3( 0.0f,-1.0f,-1.0f),
-            Vec3( 0.0f, 0.0f, 2.0f),
-            Vec3( 0.0f, 2.0f, 0.0f)
-        );
+        auto camera = Camera();
+
+        auto plane = camera.getTargetPlane();
 
         auto ray = Ray(
             Vec3(-6.9f, 0.5f,-0.5f),
-            Vec3( 6.9f,-0.1f, 0.1f).normalized()
+            Vec3( 6.9f,-0.1f, 0.1f)
         );
-
-        std::cout << "Ray: " << ray << "\n";
 
         std::cout << "Intersection distance: " << plane.intersectRay(ray) << "\n";
 

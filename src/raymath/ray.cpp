@@ -7,7 +7,7 @@
 
 
 Ray::Ray(const Vec3& initOrigin, const Vec3& initDirection)
-    : origin(initOrigin), direction(initDirection)
+    : origin(initOrigin), direction(initDirection.normalized())
 {
 }
 

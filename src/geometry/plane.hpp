@@ -21,7 +21,7 @@ struct Plane
 
     Plane(const Vec3& initCorner = Vec3(), const Vec3& initEdge1 = Vec3(), const Vec3& initEdge2 = Vec3());
 
-    // return -1.0f if no intersection, otherwise distance to intersection.
+    // 0.0f if ray is parallel, otherwise distance to intersection. Negative means intersection in the past.
     float intersectRay(const Ray& ray) const;
 };
 

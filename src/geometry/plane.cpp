@@ -18,11 +18,11 @@ Plane::Plane(const Vec3& initCorner, const Vec3& initEdge1, const Vec3& initEdge
 
 float Plane::intersectRay(const Ray& ray) const
 {
-    auto normal = edge2 % edge1;
+    auto normal = edge1 % edge2;
     auto angleProduct = normal * ray.direction;
 
     // check if ray is parallel to or moving away from plane of parallelogram.
-    if (angleProduct <= 0.0f) return -1.0f;
+    if (angleProduct == 0.0f) return 0.0f;
 
     /*
     normal here is very handy.

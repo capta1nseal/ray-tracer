@@ -17,7 +17,6 @@ Vec3::Vec3(float initX, float initY, float initZ)
 }
 Vec3::Vec3(const Direction& direction)
 {
-    std::cout << direction.altitude << "\n";
     z = sinf32(direction.altitude);
 
     auto baseLength = sqrtf32(1.0f - z * z);
@@ -135,7 +134,7 @@ Vec3 Vec3::cross(const Vec3& other) const
 void Vec3::normalize()
 {
     float length = (*this)();
-    if (length == 0.0f) return;
+    if (length == 0.0f or length == 1.0f) return;
     x /= length;
     y /= length;
     z /= length;
@@ -143,7 +142,10 @@ void Vec3::normalize()
 Vec3 Vec3::normalized() const
 {
     float length = (*this)();
+
     if (length == 0.0f) return Vec3();
+    if (length == 1.0f) return *this;
+
     return Vec3(x / length, y / length, z / length);
 }
 
