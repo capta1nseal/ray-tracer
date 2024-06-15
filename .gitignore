@@ -5,3 +5,6 @@ dep/
 
 # random IDE cleanup
 .vscode/
+
+# developer notes
+notes/

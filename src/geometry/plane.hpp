@@ -7,6 +7,7 @@
 
 /*
 Geometric parallelogram on a plane.
+Most common use case expected to be rectangles
 Implements boolean ray intersection check.
 */
 struct Plane
@@ -20,7 +21,8 @@ struct Plane
 
     Plane(const Vec3& initCorner = Vec3(), const Vec3& initEdge1 = Vec3(), const Vec3& initEdge2 = Vec3());
 
-    bool intersectRay(const Ray& ray);
+    // return -1.0f if no intersection, otherwise distance to intersection.
+    float intersectRay(const Ray& ray) const;
 };
 
 
