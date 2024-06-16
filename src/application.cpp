@@ -3,9 +3,8 @@
 
 #include <chrono>
 #include <iostream>
-#include <vector>
-#include <memory>
 
+#include "world.hpp"
 #include "geometry/geometry.hpp"
 #include "camera.hpp"
 
@@ -28,37 +27,20 @@ void RayTracerApplication::run()
         auto camera = Camera(
             Vec3(-10.0, 0.0, 0.0),
             Orientation( 0.0, 0.0, 0.0),
-            16 * 3, 9 * 3
+            16 * 7, 9 * 7
         );
-
-        std::vector<Primitive> world;
-
-        world.push_back(
-            Plane(
-                Vec3( 0.0f, 0.0f,-2.0f),
-                Vec3( 0.0f,-2.0f, 2.0f),
-                Vec3( 0.0f, 2.0f, 2.0f)
-            )
-        );
-        world.push_back(
-            Sphere(
-                Vec3( 0.0f, 2.0f, 2.0f),
-                1.0f
-            )
-        );
-
-        Ray ray;
-
-        HitInfo hitInfo;
 
         PrimitiveIntersector intersector;
+        
+        Ray ray;
+        HitInfo hitInfo;
 
         for (unsigned int y = camera.getHeight(); y > 0; y--)
         {
             for (unsigned int x = 0; x < camera.getWidth(); x++)
             {
                 bool intersection = false;
-                for (const auto& primitive : world)
+                for (const auto& primitive : world.getPrimitives())
                 {
                     ray = camera.getRayToPixel(x, y);
                     hitInfo = std::visit(intersector.with(&ray), primitive);

@@ -5,6 +5,10 @@
 #include "../../raymath/raymath.hpp"
 
 
+/*
+Geometric sphere in 3D space.
+Implements ray intersection.
+*/
 struct Sphere
 {
     // Center point of sphere in global coordinates.

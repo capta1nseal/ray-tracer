@@ -8,10 +8,11 @@
 /*
 Wrapper for necessary information to get out of a ray intersection check.
 Should be the return type for any ray intersection.
+If didHit is false, assume all other members to be invalid.
 */
 struct HitInfo
 {
-    // didHit is true only if ray does actually intersect geometry in positive direction.
+    // didHit is true only in the case of an intersection.
     bool didHit;
     // Distance to hitPoint. 0.0f never means an intersection.
     float distance;
