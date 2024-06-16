@@ -9,7 +9,7 @@ It then follows that the priorities of this project are:
 
 ## project state
 
-The skeletons of what is to come are being constructed, and soon they may create the skeleton of an image in the command line.
+The backbone of a ray tracer has been built, and can project the geometry of any parallelogram, rectangle or square to the screen.
 
 ### geometry
 
