@@ -3,7 +3,7 @@
 
 #include <math.h>
 
-#include "../raymath/raymath.hpp"
+#include "../../raymath/raymath.hpp"
 
 
 Plane::Plane(const Vec3& initCorner, const Vec3& initEdge1, const Vec3& initEdge2)
@@ -20,17 +20,17 @@ HitInfo Plane::intersectRay(const Ray& ray) const
 
     // Normal is first signed and not normalized, later surface normal.
     hitInfo.normal = edge1 % edge2;
-    // Distance along ray to plane of parallelogram.
-    float distance = hitInfo.normal * ray.direction;
+    // Temporarily represents dot product of signed area and ray direction
+    hitInfo.distance = hitInfo.normal * ray.direction;
 
-    if (distance == 0.0f) return hitInfo;
+    if (hitInfo.distance == 0.0f) return hitInfo;
 
     // Will be zero if edge vectors colinear.
-    distance = (hitInfo.normal * (corner - ray.origin)) / distance;
+    hitInfo.distance = (hitInfo.normal * (corner - ray.origin)) / hitInfo.distance;
 
-    if (distance <= 0.0f) return hitInfo;
+    if (hitInfo.distance <= 0.0f) return hitInfo;
 
-    hitInfo.hitPoint = ray.origin + (ray.direction * distance);
+    hitInfo.hitPoint = ray.origin + (ray.direction * hitInfo.distance);
 
     // first local coordinates of hitPoint, then signed area vector between the local point and edge2.
     Vec3 area2 = hitInfo.hitPoint - corner;

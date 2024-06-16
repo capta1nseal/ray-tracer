@@ -11,11 +11,13 @@ Should be the return type for any ray intersection.
 */
 struct HitInfo
 {
-    // didHit is true only if ray does actually intersect geometry in positive direction
+    // didHit is true only if ray does actually intersect geometry in positive direction.
     bool didHit;
-    // global position of ray's intersection with geometry
+    // Distance to hitPoint. 0.0f never means an intersection.
+    float distance;
+    // Global position of ray's intersection with geometry.
     Vec3 hitPoint;
-    // normal vector in direction of incoming ray
+    // Normal vector in direction of incoming ray.
     Vec3 normal;
     // TODO implement material
 

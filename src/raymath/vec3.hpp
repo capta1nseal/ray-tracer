@@ -48,14 +48,16 @@ struct Vec3
     // empty parantheses operator is magnitude
     float operator()() const;
 
-    float dot(const Vec3& other) const;
-    Vec3 cross(const Vec3& other) const;
-
     void normalize();
     Vec3 normalized() const;
 
     friend std::ostream& operator<<(std::ostream& os, const Vec3& vec3);
 };
+
+Vec3 operator+(const float& scalar, const Vec3& vec3);
+Vec3 operator-(const float& scalar, const Vec3& vec3);
+Vec3 operator*(const float& scalar, const Vec3& vec3);
+Vec3 operator/(const float& scalar, const Vec3& vec3);
 
 
 #endif

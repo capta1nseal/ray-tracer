@@ -2,7 +2,7 @@
 #define _RAYTRACERPLANE_
 
 
-#include "../raymath/raymath.hpp"
+#include "../../raymath/raymath.hpp"
 
 
 /*

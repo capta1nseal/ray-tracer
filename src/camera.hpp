@@ -5,7 +5,7 @@
 #include <math.h>
 
 #include "raymath/raymath.hpp"
-#include "geometry/plane.hpp"
+#include "geometry/primitives/plane.hpp"
 
 
 /*

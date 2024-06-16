@@ -7,7 +7,8 @@ wrapper for all implemented geometry types
 */
 
 
-#include "plane.hpp"
+#include "primitives/primitives.hpp"
+#include "primitiveintersector.hpp"
 
 
 #endif
