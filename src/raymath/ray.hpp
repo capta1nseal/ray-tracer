@@ -4,26 +4,25 @@
 
 #include <ostream>
 
-#include "point.hpp"
-#include "direction.hpp"
+#include "vec3.hpp"
 
 
 /*
 Encapsulates an origin point and direction.
 Also implements some relevant mathematical operations.
 */
-class Ray
+struct Ray
 {
-public:
-    Ray();
-    Ray(const Point& initOrigin, const Direction& initDirection);
+    Vec3 origin, direction;
 
-    // outputs formatted origin-direction pair to out stream
+    // initDirection will be normalized.
+    Ray(const Vec3& initOrigin = Vec3(), const Vec3& initDirection = Vec3(1.0f, 0.0f, 0.0f));
+
+    // Distance to a point, ensure they're in the same coordinate system.
+    float distanceToPoint(const Vec3& point) const;
+
+    // outputs formatted origin,direction pair to out stream.
     friend std::ostream& operator<<(std::ostream& os, const Ray& ray);
-
-private:
-    Point origin;
-    Direction direction;
 };
 
 

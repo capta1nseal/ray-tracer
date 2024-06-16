@@ -2,19 +2,16 @@
 
 
 #include <ostream>
-
-
 #include <cmath>
 #include <math.h>
+
+#include "orientation.hpp"
+#include "vec3.hpp"
 
 
 const float pi = M_PI;
 
 
-Direction::Direction()
-{
-    azimuth = altitude = 0.0f;
-}
 Direction::Direction(float initAzimuth, float initAltitude)
     : azimuth(initAzimuth), altitude(initAltitude)
 {
@@ -24,6 +21,16 @@ Direction::Direction(float initAzimuth, float initAltitude)
     // TODO verify that fmod behaves as expected here
     azimuth = std::fmod(azimuth, pi);
     altitude = std::fmod(altitude, pi);
+}
+Direction::Direction(const Orientation& orientation)
+    : Direction(orientation.yaw, orientation.pitch)
+{    
+}
+Direction::Direction(const Vec3& direction)
+{
+    altitude = asin(direction.z);
+
+    azimuth = asin(direction.y / sqrt(direction.x * direction.x + direction.y * direction.y));
 }
 
 std::ostream& operator<<(std::ostream& os, const Direction& direction)

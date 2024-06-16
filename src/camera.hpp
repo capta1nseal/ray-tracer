@@ -2,23 +2,47 @@
 #define _RAYTRACERCAMERA_
 
 
+#include <math.h>
+
 #include "raymath/raymath.hpp"
+#include "geometry/plane.hpp"
 
 
+/*
+Wrapper for camera's spatial positioning and lens values.
+*/
 class Camera
 {
 public:
     Camera(
-        const Point& initPosition = Point(), const Orientation& initOrientation = Orientation(),
-        float initFocalLength = 50.0f, float initLensDiameter = 30.0f
+        const Vec3& initPosition = Vec3(), const Orientation& initOrientation = Orientation(),
+        unsigned int initWidth = 1920, unsigned int initHeight = 1080,
+        float initHorizontalFOV = 55.0*M_PI/180.0
     );
 
+    float getWidth() const;
+    float getHeight() const;
+
+    Plane getTargetPlane() const;
+
+    Ray getRayToPixel(unsigned int x, unsigned int y) const;
+
 private:
-    Point position;
+    Vec3 position;
     Orientation orientation;
-    // lengths in mm
-    float focalLength;
-    float lensDiameter;
+
+    // lengths in m
+    // angles in rad
+
+    unsigned int width;
+    unsigned int height;
+    float aspectRatio;
+    float horizontalFOV;
+    float verticalFOV;
+
+    // rays will be cast towards this plane, centered exactly 1 m in front of the camera.
+    // the origin of the plane will be in the bottom left from the perspective of the camera.
+    Plane targetPlane;
 };
 
 

@@ -3,18 +3,18 @@
 
 #include <ostream>
 
-#include "point.hpp"
-#include "direction.hpp"
+#include "vec3.hpp"
 
 
-Ray::Ray()
+Ray::Ray(const Vec3& initOrigin, const Vec3& initDirection)
+    : origin(initOrigin), direction(initDirection.normalized())
 {
-    origin = Point();
-    direction = Direction();
 }
-Ray::Ray(const Point& initOrigin, const Direction& initDirection)
-    : origin(initOrigin), direction(initDirection)
+
+float Ray::distanceToPoint(const Vec3& point) const
 {
+    // TODO implement or delete
+    return 0.0f;
 }
 
 std::ostream& operator<<(std::ostream& os, const Ray& ray)
