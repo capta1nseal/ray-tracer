@@ -35,13 +35,15 @@ void RayTracerApplication::run()
             Vec3( 0.0f,-2.0f, 2.0f)
         );
 
+        HitInfo hitInfo;
+
         for (unsigned int y = camera.getHeight(); y > 0; y--)
         {
             for (unsigned int x = 0; x < camera.getWidth(); x++)
             {
-                float distance = plane.intersectRay(camera.getRayToPixel(x, y));
-                if (distance <= 0.0f) std::cout << "  ";
-                else std::cout << "@@";
+                hitInfo = plane.intersectRay(camera.getRayToPixel(x, y));
+                if (hitInfo.didHit) std::cout << "@@";
+                else std::cout << "  ";
             }
             std::cout << "|\n";
         }
