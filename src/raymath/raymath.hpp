@@ -12,6 +12,7 @@ Headers in this directory shouldn't include other headers from this project, to 
 #include "orientation.hpp"
 #include "vec3.hpp"
 #include "ray.hpp"
+#include "hitinfo.hpp"
 
 
 #endif

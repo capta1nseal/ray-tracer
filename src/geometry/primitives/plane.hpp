@@ -2,7 +2,7 @@
 #define _RAYTRACERPLANE_
 
 
-#include "../raymath/raymath.hpp"
+#include "../../raymath/raymath.hpp"
 
 
 /*
@@ -21,9 +21,8 @@ struct Plane
 
     Plane(const Vec3& initCorner = Vec3(), const Vec3& initEdge1 = Vec3(), const Vec3& initEdge2 = Vec3());
 
-    // 0.0f if ray is parallel or doesn't intersect, otherwise distance to intersection.
-    // Negative means intersection in the past, but intersection is not guaranteed in this case.
-    float intersectRay(const Ray& ray) const;
+    // returns a HitInfo object. If didHit is false, assume hitpoint and normal are invalid.
+    HitInfo intersectRay(const Ray& ray) const;
 };
 
 
