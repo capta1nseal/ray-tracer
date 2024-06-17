@@ -3,9 +3,8 @@
 
 #include <chrono>
 #include <iostream>
-#include <vector>
-#include <memory>
 
+#include "world.hpp"
 #include "geometry/geometry.hpp"
 #include "camera.hpp"
 
@@ -26,45 +25,47 @@ void RayTracerApplication::run()
         frameCount++;
 
         auto camera = Camera(
-            Vec3(-10.0, 0.0, 0.0),
-            Orientation( 0.0, 0.0, 0.0),
-            16 * 3, 9 * 3
+            Vec3(-16.0, 7.5, 4.0),
+            Orientation( 0.0, M_PI * -0.07, M_PI * -0.15),
+            16 * 11, 9 * 11
         );
-
-        std::vector<Primitive> world;
-
-        world.push_back(
-            Plane(
-                Vec3( 0.0f, 0.0f,-2.0f),
-                Vec3( 0.0f,-2.0f, 2.0f),
-                Vec3( 0.0f, 2.0f, 2.0f)
-            )
-        );
-        world.push_back(
-            Sphere(
-                Vec3( 0.0f, 2.0f, 2.0f),
-                1.0f
-            )
-        );
-
-        Ray ray;
-
-        HitInfo hitInfo;
 
         PrimitiveIntersector intersector;
+        
+        Ray ray;
+        HitInfo hitInfo;
 
         for (unsigned int y = camera.getHeight(); y > 0; y--)
         {
             for (unsigned int x = 0; x < camera.getWidth(); x++)
             {
-                bool intersection = false;
-                for (const auto& primitive : world)
+                bool anyIntersection = false;
+                HitInfo nearestHitInfo;
+                for (const auto& primitive : world.getPrimitives())
                 {
                     ray = camera.getRayToPixel(x, y);
                     hitInfo = std::visit(intersector.with(&ray), primitive);
-                    if (hitInfo.didHit) intersection = true;
+                    if (hitInfo.didHit)
+                    {
+                        anyIntersection = true;
+                        if (nearestHitInfo.didHit == false or hitInfo.distance < nearestHitInfo.distance)
+                        {
+                            nearestHitInfo = hitInfo;
+                        }
+                    }
                 }
-                if (intersection) std::cout << "@@";
+                if (anyIntersection)
+                {
+                    float valueOfInterest = nearestHitInfo.normal.x;
+                    if (valueOfInterest < 0.0f) std::cout << "-";
+                    else if (valueOfInterest > 0.0f) std::cout << "+";
+                    else std::cout << "0";
+
+                    valueOfInterest = nearestHitInfo.normal.y;
+                    if (valueOfInterest < 0.0f) std::cout << "-";
+                    else if (valueOfInterest > 0.0f) std::cout << "+";
+                    else std::cout << "0";
+                }
                 else std::cout << "  ";
             }
             std::cout << "|\n";

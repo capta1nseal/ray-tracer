@@ -16,7 +16,7 @@ Camera::Camera(
     if (initWidth == 0) initWidth = 1;
     if (initHeight == 0) initHeight = 1;
 
-    if (!isnormal(initHorizontalFOV)) initHorizontalFOV = 55.0 * M_PI / 180.0;
+    if (!isnormal(initHorizontalFOV)) initHorizontalFOV = 49.0 * M_PI / 180.0;
 
     position = initPosition;
     orientation = initOrientation;
@@ -40,25 +40,19 @@ Plane Camera::getTargetPlane() const
     float toPlane = 1.0f;
     float toLeft = toPlane * tan(horizontalFOV / 2.0f);
     float toBottom = toLeft / aspectRatio;
-    float planeWidth = 2.0f * toPlane * tan(horizontalFOV / 2.0f);
-    float planeHeight = planeWidth / aspectRatio;
 
-    float distanceToEdge = sqrt(toPlane * toPlane + toLeft * toLeft);
-    float distanceToCorner = sqrt(toPlane * toPlane + toLeft * toLeft + toBottom * toBottom);
-
-    float cornerAltitude = abs(
-        acos(
-            (distanceToCorner * distanceToCorner + distanceToEdge * distanceToEdge - toBottom * toBottom) / (2 * distanceToCorner * distanceToEdge)
-        )
-    );
-    Direction toCorner = Direction(orientation.yaw - horizontalFOV / 2.0f, orientation.pitch - cornerAltitude);
-
-    Vec3 corner = position + Vec3(toCorner) * distanceToCorner;
-
+    Vec3 forwardVec = Vec3(orientation);
     Vec3 upVec = Vec3(Direction(orientation.yaw, orientation.pitch + M_PI / 2.0f));
-    Vec3 rightVec = Vec3(Direction(orientation.yaw + M_PI / 2.0f, orientation.pitch));
+    Vec3 rightVec = upVec % forwardVec;
+    // right direction would require an actual 3D rotation transform to calculate without cross product
 
-    return Plane(corner, rightVec * planeWidth, upVec * planeHeight);
+    Vec3 toCorner = forwardVec * toPlane + rightVec * -1 * toLeft + upVec * -1 * toBottom;
+
+    Vec3 corner = position + toCorner;
+    Vec3 edgeX = rightVec * toLeft * 2.0f;
+    Vec3 edgeY = upVec * toBottom * 2.0f;
+
+    return Plane(corner, edgeX, edgeY);
 }
 
 Ray Camera::getRayToPixel(unsigned int x, unsigned int y) const

@@ -2,6 +2,9 @@
 #define _RAYTRACERAPPLICATION_
 
 
+#include "world.hpp"
+
+
 /*
 A wrapper class initializing and facilitating the execution of the program.
 */
@@ -13,6 +16,7 @@ public:
     void run();
 
 private:
+    World world;
 };
 
 
