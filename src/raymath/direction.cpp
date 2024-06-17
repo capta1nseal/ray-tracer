@@ -10,6 +10,7 @@
 
 
 const float pi = M_PI;
+const float tau = 2.0f * pi;
 
 
 Direction::Direction(float initAzimuth, float initAltitude)
@@ -19,8 +20,12 @@ Direction::Direction(float initAzimuth, float initAltitude)
     if (!isnormal(altitude)) altitude = 0.0f;
 
     // TODO verify that fmod behaves as expected here
-    azimuth = std::fmod(azimuth, pi);
-    altitude = std::fmod(altitude, pi);
+    azimuth = std::fmod(azimuth, tau);
+    if (azimuth < -pi) azimuth += tau;
+    else if (azimuth > pi) azimuth -= tau;
+    altitude = std::fmod(altitude, tau);
+    if (altitude < -pi) altitude += tau;
+    else if (altitude > pi) altitude -= tau;
 }
 Direction::Direction(const Orientation& orientation)
     : Direction(orientation.yaw, orientation.pitch)

@@ -29,11 +29,11 @@ HitInfo Sphere::intersectRay(const Ray& ray) const
 
     hitInfo.didHit = true;
 
-    float halfDepth = sqrt(radius * radius + midDifference * midDifference);
+    float halfDepth = sqrt(radius * radius - midDifference * midDifference);
 
     hitInfo.distance = midDistance - halfDepth;
     // Check if ray origin inside sphere.
-    hitInfo.distance += (static_cast<int>(hitInfo.distance <= 0.0f) * 2.0f * halfDepth);
+    hitInfo.distance += (hitInfo.distance <= 0.0f ? 2.0f : 0.0f) * halfDepth;
 
     hitInfo.hitPoint = ray.origin + hitInfo.distance * ray.direction;
     

@@ -17,7 +17,7 @@ public:
     Camera(
         const Vec3& initPosition = Vec3(), const Orientation& initOrientation = Orientation(),
         unsigned int initWidth = 1920, unsigned int initHeight = 1080,
-        float initHorizontalFOV = 55.0*M_PI/180.0
+        float initHorizontalFOV = 49.0*M_PI/180.0
     );
 
     float getWidth() const;

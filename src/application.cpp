@@ -25,9 +25,9 @@ void RayTracerApplication::run()
         frameCount++;
 
         auto camera = Camera(
-            Vec3(-10.0, 0.0, 0.0),
-            Orientation( 0.0, 0.0, 0.0),
-            16 * 7, 9 * 7
+            Vec3(-16.0, 7.5, 4.0),
+            Orientation( 0.0, M_PI * -0.07, M_PI * -0.15),
+            16 * 11, 9 * 11
         );
 
         PrimitiveIntersector intersector;
@@ -39,14 +39,33 @@ void RayTracerApplication::run()
         {
             for (unsigned int x = 0; x < camera.getWidth(); x++)
             {
-                bool intersection = false;
+                bool anyIntersection = false;
+                HitInfo nearestHitInfo;
                 for (const auto& primitive : world.getPrimitives())
                 {
                     ray = camera.getRayToPixel(x, y);
                     hitInfo = std::visit(intersector.with(&ray), primitive);
-                    if (hitInfo.didHit) intersection = true;
+                    if (hitInfo.didHit)
+                    {
+                        anyIntersection = true;
+                        if (nearestHitInfo.didHit == false or hitInfo.distance < nearestHitInfo.distance)
+                        {
+                            nearestHitInfo = hitInfo;
+                        }
+                    }
                 }
-                if (intersection) std::cout << "@@";
+                if (anyIntersection)
+                {
+                    float valueOfInterest = nearestHitInfo.normal.x;
+                    if (valueOfInterest < 0.0f) std::cout << "-";
+                    else if (valueOfInterest > 0.0f) std::cout << "+";
+                    else std::cout << "0";
+
+                    valueOfInterest = nearestHitInfo.normal.y;
+                    if (valueOfInterest < 0.0f) std::cout << "-";
+                    else if (valueOfInterest > 0.0f) std::cout << "+";
+                    else std::cout << "0";
+                }
                 else std::cout << "  ";
             }
             std::cout << "|\n";
