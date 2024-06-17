@@ -1,7 +1,7 @@
 #include "camera.hpp"
 
 
-#include <math.h>
+#include <cmath>
 
 #include "raymath/raymath.hpp"
 
@@ -16,7 +16,7 @@ Camera::Camera(
     if (initWidth == 0) initWidth = 1;
     if (initHeight == 0) initHeight = 1;
 
-    if (!isnormal(initHorizontalFOV)) initHorizontalFOV = 49.0 * M_PI / 180.0;
+    if (!std::isnormal(initHorizontalFOV) or initHorizontalFOV <= 0.0f) initHorizontalFOV = 49.0 * M_PI / 180.0;
 
     position = initPosition;
     orientation = initOrientation;
@@ -41,8 +41,8 @@ Plane Camera::getTargetPlane() const
     float toLeft = toPlane * tan(horizontalFOV / 2.0f);
     float toBottom = toLeft / aspectRatio;
 
-    Vec3 forwardVec = Vec3(orientation);
-    Vec3 upVec = Vec3(Direction(orientation.yaw, orientation.pitch + M_PI / 2.0f));
+    Vec3 forwardVec = orientation.forward();
+    Vec3 upVec = orientation.up();
     Vec3 rightVec = upVec % forwardVec;
     // right direction would require an actual 3D rotation transform to calculate without cross product
 

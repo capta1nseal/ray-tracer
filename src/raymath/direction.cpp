@@ -3,7 +3,6 @@
 
 #include <ostream>
 #include <cmath>
-#include <math.h>
 
 #include "orientation.hpp"
 #include "vec3.hpp"
@@ -16,8 +15,8 @@ const float tau = 2.0f * pi;
 Direction::Direction(float initAzimuth, float initAltitude)
     : azimuth(initAzimuth), altitude(initAltitude)
 {
-    if (!isnormal(azimuth)) azimuth = 0.0f;
-    if (!isnormal(altitude)) altitude = 0.0f;
+    if (!std::isnormal(azimuth)) azimuth = 0.0f;
+    if (!std::isnormal(altitude)) altitude = 0.0f;
 
     // TODO verify that fmod behaves as expected here
     azimuth = std::fmod(azimuth, tau);

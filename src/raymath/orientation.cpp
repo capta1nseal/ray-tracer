@@ -3,9 +3,9 @@
 
 #include <ostream>
 #include <cmath>
-#include <math.h>
 
 #include "direction.hpp"
+#include "vec3.hpp"
 
 
 const float pi = M_PI;
@@ -15,10 +15,19 @@ const float tau = 2.0f * pi;
 Orientation::Orientation(float initRoll, float initPitch, float initYaw)
     : roll(initRoll), pitch(initPitch), yaw(initYaw)
 {
-    if (!isnormal(roll)) roll = 0.0f;
-    if (!isnormal(pitch)) pitch = 0.0f;
-    if (!isnormal(yaw)) yaw = 0.0f;
+    if (!std::isnormal(roll)) roll = 0.0f;
+    if (!std::isnormal(pitch)) pitch = 0.0f;
+    if (!std::isnormal(yaw)) yaw = 0.0f;
 
+    conformAngles();
+}
+Orientation::Orientation(const Direction& direction)
+    : Orientation(0.0f, direction.altitude, direction.azimuth)
+{
+}
+
+void Orientation::conformAngles()
+{
     roll = std::fmod(roll, tau);
     if (roll < -pi) roll += tau;
     else if (roll > pi) roll -= tau;
@@ -29,9 +38,41 @@ Orientation::Orientation(float initRoll, float initPitch, float initYaw)
     if (yaw < -pi) yaw += tau;
     else if (yaw > pi) yaw -= tau;
 }
-Orientation::Orientation(const Direction& direction)
-    : Orientation(0.0f, direction.altitude, direction.azimuth)
+
+Vec3 Orientation::forward() const
 {
+    return *this;
+}
+
+Vec3 Orientation::up() const
+{
+    Vec3 upVector;
+    
+    float minusCosRollSinPitch = -cosf32(roll) * sinf32(pitch);
+    float sinRoll = sinf32(roll);
+    float sinYaw = sinf32(yaw);
+    float cosYaw = cosf32(yaw);
+
+    // return {
+    //     minusCosRollSinPitch * cosYaw + sinRoll * sinYaw,
+    //     minusCosRollSinPitch * sinYaw - sinRoll * cosYaw,
+    //     cosf32(pitch) * cosf32(roll)
+    // };
+
+    upVector.x = -cosf32(roll) * sinf32(pitch) * cosf32(yaw) + sinf32(roll) * sinf32(yaw);
+    upVector.y = -cosf32(roll) * sinf32(pitch) * sinf32(yaw) - sinf32(roll) * cosf32(yaw);
+    upVector.z = cosf32(pitch) * cosf32(roll);
+
+    return upVector;
+}
+
+Orientation Orientation::operator+(const Orientation& other) const
+{
+    return Orientation(roll + other.roll, pitch + other.pitch, yaw + other.yaw);
+}
+Orientation Orientation::operator-(const Orientation& other) const
+{
+    return Orientation(roll - other.roll, pitch - other.pitch, yaw - other.yaw);
 }
 
 std::ostream& operator<<(std::ostream& os, const Orientation& orientation)

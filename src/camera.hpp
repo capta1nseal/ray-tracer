@@ -2,7 +2,7 @@
 #define _RAYTRACERCAMERA_
 
 
-#include <math.h>
+#include <cmath>
 
 #include "raymath/raymath.hpp"
 #include "geometry/primitives/plane.hpp"

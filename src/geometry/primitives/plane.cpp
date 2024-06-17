@@ -1,7 +1,7 @@
 #include "plane.hpp"
 
 
-#include <math.h>
+#include <cmath>
 
 #include "../../raymath/raymath.hpp"
 

@@ -26,7 +26,7 @@ void RayTracerApplication::run()
 
         auto camera = Camera(
             Vec3(-16.0, 7.5, 4.0),
-            Orientation( 0.0, M_PI * -0.07, M_PI * -0.15),
+            Orientation( M_PI * 0.0, M_PI * -0.07, M_PI * -0.15),
             16 * 7, 9 * 7
         );
 

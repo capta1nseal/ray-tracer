@@ -1,7 +1,7 @@
 #include "sphere.hpp"
 
 
-#include <math.h>
+#include <cmath>
 
 #include "../../raymath/raymath.hpp"
 
@@ -9,7 +9,7 @@
 Sphere::Sphere(const Vec3& initCenter, float initRadius)
     : center(initCenter), radius(initRadius)
 {
-    if (!isnormal(radius)) radius = 1.0f;
+    if (!std::isnormal(radius)) radius = 1.0f;
 }
 
 HitInfo Sphere::intersectRay(const Ray& ray) const
@@ -32,8 +32,8 @@ HitInfo Sphere::intersectRay(const Ray& ray) const
     float halfDepth = sqrt(radius * radius - midDifference * midDifference);
 
     hitInfo.distance = midDistance - halfDepth;
-    // Check if ray origin inside sphere.
-    hitInfo.distance += (hitInfo.distance <= 0.0f ? 2.0f : 0.0f) * halfDepth;
+    // Select exit point if ray origin inside sphere.
+    hitInfo.distance += static_cast<int>(hitInfo.distance <= 0.0f) * 2.0f * halfDepth;
 
     hitInfo.hitPoint = ray.origin + hitInfo.distance * ray.direction;
     

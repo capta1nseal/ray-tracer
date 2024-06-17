@@ -2,7 +2,7 @@
 
 
 #include <ostream>
-#include <math.h>
+#include <cmath>
 
 #include "direction.hpp"
 #include "orientation.hpp"
@@ -11,22 +11,29 @@
 Vec3::Vec3(float initX, float initY, float initZ)
     : x(initX), y(initY), z(initZ)
 {
-    if (!isnormal(x)) x = 0.0f;
-    if (!isnormal(y)) y = 0.0f;
-    if (!isnormal(z)) z = 0.0f;
+    if (!std::isnormal(x)) x = 0.0f;
+    if (!std::isnormal(y)) y = 0.0f;
+    if (!std::isnormal(z)) z = 0.0f;
 }
 Vec3::Vec3(const Direction& direction)
 {
     z = sinf32(direction.altitude);
 
-    auto baseLength = sqrtf32(1.0f - z * z);
+    // x here temporarily stands for length of the direction vector projected onto the XY plane.
+    x = cosf32(direction.altitude);
 
-    y = sinf32(direction.azimuth) * baseLength;
-    x = sqrtf32(baseLength * baseLength - y * y);
+    y = sinf32(direction.azimuth) * x;
+    x = cosf32(direction.azimuth) * x;
+    
 }
 Vec3::Vec3(const Orientation& orientation)
-    : Vec3(Direction(orientation))
 {
+    z = sinf32(orientation.pitch);
+    // x here temporarily stands for length of the direction vector projected onto the XY plane.
+    x = cosf32(orientation.pitch);
+
+    y = sinf32(orientation.yaw) * x;
+    x = cosf32(orientation.yaw) * x;
 }
 
 bool Vec3::operator==(const Vec3& other) const

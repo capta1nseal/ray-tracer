@@ -5,6 +5,7 @@
 #include <ostream>
 
 struct Direction;
+struct Vec3;
 
 
 /*
@@ -19,7 +20,19 @@ struct Orientation
     Orientation(float initRoll = 0.0f, float initPitch = 0.0f, float initYaw = 0.0f);
     Orientation(const Direction& direction);
 
-    // outputs formatted direction to out stream
+    // enforces angle range
+    void conformAngles();
+
+    // return normalized vector pointing forwards
+    Vec3 forward() const;
+
+    // returns normalized vector pointing up
+    Vec3 up() const;
+
+    Orientation operator+(const Orientation& other) const;
+    Orientation operator-(const Orientation& other) const;
+
+    // outputs formatted orientation to out stream
     friend std::ostream& operator<<(std::ostream& os, const Orientation& orientation);
 };
 
