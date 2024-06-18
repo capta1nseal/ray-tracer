@@ -29,14 +29,14 @@ Orientation::Orientation(const Direction& direction)
 void Orientation::conformAngles()
 {
     roll = std::fmod(roll, tau);
-    if (roll < -pi) roll += tau;
-    else if (roll > pi) roll -= tau;
+    roll = (roll <-pi) ? roll + tau : roll;
+    roll = (roll > pi) ? roll - tau : roll;
     pitch = std::fmod(pitch, tau);
-    if (pitch < -pi) pitch += tau;
-    else if (pitch > pi) pitch -= tau;
+    pitch = (pitch <-pi) ? pitch + tau : pitch;
+    pitch = (pitch > pi) ? pitch - tau : pitch;
     yaw = std::fmod(yaw, tau);
-    if (yaw < -pi) yaw += tau;
-    else if (yaw > pi) yaw -= tau;
+    yaw = (yaw <-pi) ? yaw + tau : yaw;
+    yaw = (yaw > pi) ? yaw - tau : yaw;
 }
 
 Vec3 Orientation::forward() const
@@ -46,9 +46,8 @@ Vec3 Orientation::forward() const
 
 Vec3 Orientation::up() const
 {
-    Vec3 upVector;
-    
-    float cosRollSinPitch = cosf32(roll) * sinf32(pitch);
+    float cosRoll = cosf32(roll);
+    float cosRollSinPitch = cosRoll * sinf32(pitch);
     float sinRoll = sinf32(roll);
     float sinYaw = sinf32(yaw);
     float cosYaw = cosf32(yaw);
@@ -56,7 +55,7 @@ Vec3 Orientation::up() const
     return {
         cosRollSinPitch * cosYaw + sinRoll * sinYaw,
         cosRollSinPitch * sinYaw - sinRoll * cosYaw,
-        cosf32(pitch) * cosf32(roll)
+        cosf32(pitch) * cosRoll
     };
 }
 

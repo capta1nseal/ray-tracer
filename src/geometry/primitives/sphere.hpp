@@ -8,6 +8,7 @@
 /*
 Geometric sphere in 3D space.
 Implements ray intersection.
+Values passed in must be normal floating point values.
 */
 struct Sphere
 {

@@ -58,5 +58,8 @@ Plane Camera::getTargetPlane() const
 Ray Camera::getRayToPixel(float x, float y) const
 {
     Vec3 target = targetPlane.corner + targetPlane.edge1 * ((x + 0.5f) / static_cast<float>(width)) + targetPlane.edge2 * ((y + 0.5f) / static_cast<float>(height));
-    return Ray(position, target - position);
+    return {
+        position,
+        (target - position).normalized()
+    };
 }

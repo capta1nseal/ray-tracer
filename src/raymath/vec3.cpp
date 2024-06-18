@@ -41,6 +41,10 @@ bool Vec3::operator==(const Vec3& other) const
 {
     return x == other.x and y == other.y and z == other.z;
 }
+bool Vec3::operator==(const float& scalar) const
+{
+    return x == scalar and y == scalar and z == scalar;
+}
 
 Vec3 Vec3::operator+(const Vec3& other) const
 {
@@ -51,6 +55,10 @@ Vec3 Vec3::operator+(const float& scalar) const
     return Vec3(x + scalar, y + scalar, z + scalar);
 }
 
+Vec3 Vec3::operator-() const
+{
+    return Vec3(-1.0f * x, -1.0f * y, -1.0f * z);
+}
 Vec3 Vec3::operator-(const Vec3& other) const
 {
     return Vec3(x - other.x, y - other.y, z - other.z);

@@ -23,10 +23,12 @@ struct Vec3
     Vec3(const Orientation& orientation);
 
     bool operator==(const Vec3& other) const;
+    bool operator==(const float& scalar) const;
 
     Vec3 operator+(const Vec3& other) const;
     Vec3 operator+(const float& scalar) const;
 
+    Vec3 operator-() const;
     Vec3 operator-(const Vec3& other) const;
     Vec3 operator-(const float& scalar) const;
 

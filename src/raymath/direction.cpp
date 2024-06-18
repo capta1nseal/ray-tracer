@@ -15,16 +15,12 @@ const float tau = 2.0f * pi;
 Direction::Direction(float initAzimuth, float initAltitude)
     : azimuth(initAzimuth), altitude(initAltitude)
 {
-    if (!std::isnormal(azimuth)) azimuth = 0.0f;
-    if (!std::isnormal(altitude)) altitude = 0.0f;
-
-    // TODO verify that fmod behaves as expected here
     azimuth = std::fmod(azimuth, tau);
-    if (azimuth < -pi) azimuth += tau;
-    else if (azimuth > pi) azimuth -= tau;
+    azimuth = (azimuth <-pi) ? azimuth + tau : azimuth;
+    azimuth = (azimuth > pi) ? azimuth - tau : azimuth;
     altitude = std::fmod(altitude, tau);
-    if (altitude < -pi) altitude += tau;
-    else if (altitude > pi) altitude -= tau;
+    altitude = (altitude <-pi) ? altitude + tau : altitude;
+    altitude = (altitude > pi) ? altitude - tau : altitude;
 }
 Direction::Direction(const Orientation& orientation)
     : Direction(orientation.yaw, orientation.pitch)
@@ -32,9 +28,15 @@ Direction::Direction(const Orientation& orientation)
 }
 Direction::Direction(const Vec3& direction)
 {
-    altitude = -asin(direction.z);
+    altitude = asin(-direction.z);
 
-    azimuth = asin(direction.y / sqrt(direction.x * direction.x + direction.y * direction.y));
+    azimuth = asin(direction.y / cosf32(altitude));
+}
+
+void Direction::sanitize()
+{
+    if (!std::isnormal(azimuth)) azimuth = 0.0f;
+    if (!std::isnormal(altitude)) altitude = 0.0f;
 }
 
 std::ostream& operator<<(std::ostream& os, const Direction& direction)
