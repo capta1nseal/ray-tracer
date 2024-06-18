@@ -52,7 +52,7 @@ World::World()
     primitives.resize(primitiveCount);
 }
 
-const std::vector<Primitive>& World::getPrimitives() const
+const std::vector<Primitive<float>>& World::getPrimitives() const
 {
     return primitives;
 }

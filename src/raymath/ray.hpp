@@ -12,19 +12,25 @@ Encapsulates an origin point and direction.
 direction is expected to be passed in normalized.
 Also implements some relevant mathematical operations.
 */
+template<Vec3Basis T>
 struct Ray
 {
-    Vec3 origin, direction;
+    Vec3<T> origin, direction;
 
     // initDirection must be normalized.
-    Ray(const Vec3& initOrigin = Vec3(), const Vec3& initDirection = Vec3(1.0f, 0.0f, 0.0f));
-
-    // Distance to a point, ensure they're in the same coordinate system.
-    float distanceToPoint(const Vec3& point) const;
-
-    // outputs formatted origin,direction pair to out stream.
-    friend std::ostream& operator<<(std::ostream& os, const Ray& ray);
+    Ray(const Vec3<T>& initOrigin = {}, const Vec3<T>& initDirection = {1.0, 0.0, 0.0})
+        : origin(initOrigin), direction(initDirection) {}
+    
+    template<Vec3Basis U> Ray(const Ray<U>& other)
+        : origin(other.origin), direction(other.direction) {}
 };
+
+template<Vec3Basis T>
+std::ostream& operator<<(std::ostream& os, const Ray<T>& ray)
+{
+    os << ray.origin << "," << ray.direction;
+    return os;
+}
 
 
 #endif

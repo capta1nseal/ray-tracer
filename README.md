@@ -19,11 +19,13 @@ This project relies only upon the c++20 standard, and the build-essential packag
 (you could of course use almost any compiler)
 There will be more requirements once a graphics pipeline is introduced.
 Notable implemented features:
-- An expansive 3D vector library
+- An expansive 3D vector library, templated to different floating point precision levels 
 - Basic 3D geometric primitives
     - Their ray intersection algorithms
+    - Templates for higher floating point precision
     - Some tools to store and access arbitrary primitives in the same std::vector
 - Some classes encapsulating those types to create behaviour
+    - Templated where it makes sense
 
 #### geometry
 

@@ -24,17 +24,17 @@ void RayTracerApplication::run()
     {
         frameCount++;
 
-        auto camera = Camera(
+        Camera<float> camera = Camera<float>(
             Vec3(-16.0, 6.0, 2.0),
-            Orientation( M_PI * 0.0, M_PI * 0.04, M_PI * -0.125),
-            16 * 7, 9 * 7,
-            49.0f * M_PI / 180.0f
+            Orientation( M_PI * 0.0f, M_PI * 0.04f, M_PI * -0.125f),
+            16 * 13, 9 * 13,
+            49.0 * M_PI / 180.0
         );
 
-        PrimitiveIntersector intersector;
+        PrimitiveIntersector<float> intersector;
         
-        Ray ray;
-        HitInfo hitInfo;
+        Ray<float> ray;
+        HitInfo<float> hitInfo;
 
         float terminalFontAspectRatio = 1.8;
 
@@ -43,7 +43,7 @@ void RayTracerApplication::run()
             for (unsigned int x = 0; x < camera.getWidth() * terminalFontAspectRatio; x++)
             {
                 bool anyIntersection = false;
-                HitInfo nearestHitInfo;
+                HitInfo<float> nearestHitInfo;
                 for (const auto& primitive : world.getPrimitives())
                 {
                     ray = camera.getRayToPixel(x / terminalFontAspectRatio, y);

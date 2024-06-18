@@ -2,67 +2,152 @@
 #define _RAYTRACERVEC3_
 
 
+#include <concepts>
+#include <type_traits>
+#include <cmath>
 #include <ostream>
-
-struct Direction;
-struct Orientation;
 
 
 /*
-Basic 3D vector.
+3D vector with x, y and z of templated floating point type
 sanitize() method provided for value sanity.
 Any attempt to divide by zero, including zero length normalization, will result in zero.
 */
+
+template<typename T>
+concept Vec3Basis = std::is_floating_point_v<T>;
+
+
+template<Vec3Basis T = float>
 struct Vec3
 {
-    float x, y, z;
+    T x, y, z;
 
-    Vec3();
-    Vec3(float initX, float initY, float initZ);
-    Vec3(const Direction& direction);
-    Vec3(const Orientation& orientation);
+    Vec3(T initX = T(0.0), T initY = T(0.0), T initZ = T(0.0)) : x(initX), y(initY), z(initZ) {}
 
-    bool operator==(const Vec3& other) const;
-    bool operator==(float scalar) const;
+    template<Vec3Basis U> Vec3(const Vec3<U>& other)
+        : x(other.x), y(other.y), z(other.z) {}
 
-    Vec3 operator+(const Vec3& other) const;
-    Vec3 operator+(float scalar) const;
+    template<Vec3Basis U> bool operator==(const Vec3<U>& other) const
+    { return x == other.x and y == other.y and z == other.z; }
 
-    Vec3 operator-() const;
-    Vec3 operator-(const Vec3& other) const;
-    Vec3 operator-(float scalar) const;
+    template<Vec3Basis U> bool operator==(U scalar) const
+    { return x == scalar and y == scalar and z == scalar; }
 
-    Vec3 operator*(float scalar) const;
-    float operator*(const Vec3& other) const;
+    template<Vec3Basis U> auto operator+(const Vec3<U>& other) const
+    { return Vec3<std::common_type_t<T, U>>(x + other.x, y + other.y, z + other.z); }
 
-    Vec3 operator/(float scalar) const;
+    template<Vec3Basis U> auto operator+(U scalar) const
+    { return Vec3<std::common_type_t<T, U>>(x + scalar, y + scalar, z + scalar); }
 
-    Vec3 operator%(const Vec3& other) const;
+    template<Vec3Basis U> auto operator-(const Vec3<U>& other) const
+    { return Vec3<std::common_type_t<T, U>>(x - other.x, y - other.y, z - other.z); }
 
-    void operator+=(const Vec3& other);
-    void operator+=(float scalar);
+    template<Vec3Basis U> auto operator-(U scalar) const
+    { return Vec3<std::common_type_t<T, U>>(x - scalar, y - scalar, z - scalar); }
 
-    void operator-=(const Vec3& other);
-    void operator-=(float scalar);
+    Vec3<T> operator-() const { return Vec3<T>(-x, -y, -z); }
 
-    void operator*=(float scalar);
-    void operator/=(float scalar);
+    // operator* is dot product. operator% is cross product.
+    template<Vec3Basis U> auto operator*(const Vec3<U>& other) const
+    { return x * other.x + y * other.y + z * other.z; }
+
+    template<Vec3Basis U> auto operator*(U scalar) const
+    { return Vec3<std::common_type_t<T, U>>(x * scalar, y * scalar, z * scalar); }
+
+    template<Vec3Basis U> auto operator/(U scalar) const
+    { return Vec3<std::common_type_t<T, U>>(x / scalar, y / scalar, z / scalar); }
+
+    // operator% is cross product. operator* is dot product.
+    template<Vec3Basis U> auto operator%(const Vec3<U>& other) const
+    {
+        return Vec3<std::common_type_t<T, U>>(
+            y * other.z - z * other.y,
+            z * other.x - x * other.z,
+            x * other.y - y * other.x
+        );
+    }
+
+    template<Vec3Basis U> Vec3& operator+=(const Vec3<U>& other)
+    {
+        x += other.x;
+        y += other.y;
+        z += other.z;
+        return *this;
+    }
+    template<Vec3Basis U> Vec3& operator+=(U scalar)
+    {
+        x += scalar;
+        y += scalar;
+        z += scalar;
+        return *this;
+    }
+
+    template<Vec3Basis U> Vec3& operator-=(const Vec3<U>& other)
+    {
+        x -= other.x;
+        y -= other.y;
+        z -= other.z;
+        return *this;
+    }
+    template<Vec3Basis U> Vec3& operator-=(U scalar)
+    {
+        x -= scalar;
+        y -= scalar;
+        z -= scalar;
+        return *this;
+    }
+
+    template<Vec3Basis U> Vec3& operator*=(U scalar)
+    {
+        x *= scalar;
+        y *= scalar;
+        z *= scalar;
+        return *this;
+    }
+    template<Vec3Basis U> Vec3& operator/=(U scalar)
+    {
+        x /= scalar;
+        y /= scalar;
+        z /= scalar;
+        return *this;
+    }
 
     // empty parantheses operator is magnitude
-    float operator()() const;
+    T operator()() const
+    { return std::sqrt(x * x + y * y + z * z); }
 
-    void normalize();
-    Vec3 normalized() const;
+    void normalize()
+    {
+        T length = (*this)();
+        if (length == T(0.0) or length == T(1.0)) return;
+        (*this) *= T(1.0) / length;
+    }
+    Vec3 normalized() const
+    {
+        T length = (*this)();
 
-    void sanitize();
+        if (length == T(0.0)) return Vec3();
+        if (length == T(1.0)) return *this;
 
-    friend std::ostream& operator<<(std::ostream& os, const Vec3& vec3);
+        return (*this) * (T(1.0) / length);
+    }
+
+    void sanitize()
+    {
+        if (!std::isnormal(x)) x = T(0.0);
+        if (!std::isnormal(y)) y = T(0.0);
+        if (!std::isnormal(z)) z = T(0.0);
+    }
 };
 
-Vec3 operator+(float scalar, const Vec3& vec3);
-Vec3 operator-(float scalar, const Vec3& vec3);
-Vec3 operator*(float scalar, const Vec3& vec3);
-Vec3 operator/(float scalar, const Vec3& vec3);
+template<Vec3Basis T> std::ostream& operator<<(std::ostream& os, const Vec3<T>& vec3)
+{
+    os << "(" << vec3.x << "," << vec3.y << "," << vec3.z << ")";
+    return os;
+}
 
+template<Vec3Basis T, Vec3Basis U> auto operator*(U scalar, const Vec3<T>& vec3)
+{ return vec3 * scalar; }
 
 #endif
