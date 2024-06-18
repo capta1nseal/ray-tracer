@@ -27,7 +27,7 @@ void RayTracerApplication::run()
         auto camera = Camera(
             Vec3(-16.0, 6.0, 2.0),
             Orientation( M_PI * 0.0, M_PI * 0.04, M_PI * -0.125),
-            16 * 13, 9 * 13,
+            16 * 7, 9 * 7,
             49.0f * M_PI / 180.0f
         );
 
@@ -36,7 +36,7 @@ void RayTracerApplication::run()
         Ray ray;
         HitInfo hitInfo;
 
-        float terminalFontAspectRatio = 1.7;
+        float terminalFontAspectRatio = 1.8;
 
         for (unsigned int y = camera.getHeight(); y > 0; y--)
         {
