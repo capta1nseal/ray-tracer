@@ -10,14 +10,15 @@ struct Orientation;
 
 /*
 Basic 3D vector.
-Sanitised constructor inputs, other float inputs (including operator overloads) could cause problems.
+sanitize() method provided for value sanity.
 Any attempt to divide by zero, including zero length normalization, will result in zero.
 */
 struct Vec3
 {
     float x, y, z;
 
-    Vec3(float initX = 0.0f, float initY = 0.0f, float initZ = 0.0f);
+    Vec3();
+    Vec3(float initX, float initY, float initZ);
     Vec3(const Direction& direction);
     Vec3(const Orientation& orientation);
 
@@ -50,6 +51,8 @@ struct Vec3
 
     void normalize();
     Vec3 normalized() const;
+
+    void sanitize();
 
     friend std::ostream& operator<<(std::ostream& os, const Vec3& vec3);
 };

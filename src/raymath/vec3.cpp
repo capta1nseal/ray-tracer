@@ -8,12 +8,13 @@
 #include "orientation.hpp"
 
 
+Vec3::Vec3()
+    : x(0.0f), y(0.0f), z(0.0f)
+{
+}
 Vec3::Vec3(float initX, float initY, float initZ)
     : x(initX), y(initY), z(initZ)
 {
-    if (!std::isnormal(x)) x = 0.0f;
-    if (!std::isnormal(y)) y = 0.0f;
-    if (!std::isnormal(z)) z = 0.0f;
 }
 Vec3::Vec3(const Direction& direction)
 {
@@ -145,6 +146,13 @@ Vec3 Vec3::normalized() const
     if (length == 1.0f) return *this;
 
     return Vec3(x / length, y / length, z / length);
+}
+
+void Vec3::sanitize()
+{
+    if (!std::isnormal(x)) x = 0.0f;
+    if (!std::isnormal(y)) y = 0.0f;
+    if (!std::isnormal(z)) z = 0.0f;
 }
 
 std::ostream& operator<<(std::ostream& os, const Vec3& vec3)
