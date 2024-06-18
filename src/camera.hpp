@@ -12,7 +12,7 @@
 Wrapper for camera's spatial positioning and lens values.
 Creates a plane upon initialization that makes projecting rays very easy.
 */
-template<Vec3Basis T = float>
+template<Vec3Basis T>
 class Camera
 {
 public:

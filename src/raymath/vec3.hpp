@@ -18,7 +18,7 @@ template<typename T>
 concept Vec3Basis = std::is_floating_point_v<T>;
 
 
-template<Vec3Basis T = float>
+template<Vec3Basis T>
 struct Vec3
 {
     T x, y, z;
