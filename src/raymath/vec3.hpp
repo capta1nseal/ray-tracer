@@ -23,30 +23,30 @@ struct Vec3
     Vec3(const Orientation& orientation);
 
     bool operator==(const Vec3& other) const;
-    bool operator==(const float& scalar) const;
+    bool operator==(float scalar) const;
 
     Vec3 operator+(const Vec3& other) const;
-    Vec3 operator+(const float& scalar) const;
+    Vec3 operator+(float scalar) const;
 
     Vec3 operator-() const;
     Vec3 operator-(const Vec3& other) const;
-    Vec3 operator-(const float& scalar) const;
+    Vec3 operator-(float scalar) const;
 
-    Vec3 operator*(const float& scalar) const;
+    Vec3 operator*(float scalar) const;
     float operator*(const Vec3& other) const;
 
-    Vec3 operator/(const float& scalar) const;
+    Vec3 operator/(float scalar) const;
 
     Vec3 operator%(const Vec3& other) const;
 
     void operator+=(const Vec3& other);
-    void operator+=(const float& scalar);
+    void operator+=(float scalar);
 
     void operator-=(const Vec3& other);
-    void operator-=(const float& scalar);
+    void operator-=(float scalar);
 
-    void operator*=(const float& scalar);
-    void operator/=(const float& scalar);
+    void operator*=(float scalar);
+    void operator/=(float scalar);
 
     // empty parantheses operator is magnitude
     float operator()() const;
@@ -59,10 +59,10 @@ struct Vec3
     friend std::ostream& operator<<(std::ostream& os, const Vec3& vec3);
 };
 
-Vec3 operator+(const float& scalar, const Vec3& vec3);
-Vec3 operator-(const float& scalar, const Vec3& vec3);
-Vec3 operator*(const float& scalar, const Vec3& vec3);
-Vec3 operator/(const float& scalar, const Vec3& vec3);
+Vec3 operator+(float scalar, const Vec3& vec3);
+Vec3 operator-(float scalar, const Vec3& vec3);
+Vec3 operator*(float scalar, const Vec3& vec3);
+Vec3 operator/(float scalar, const Vec3& vec3);
 
 
 #endif

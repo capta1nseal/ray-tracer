@@ -41,7 +41,7 @@ bool Vec3::operator==(const Vec3& other) const
 {
     return x == other.x and y == other.y and z == other.z;
 }
-bool Vec3::operator==(const float& scalar) const
+bool Vec3::operator==(float scalar) const
 {
     return x == scalar and y == scalar and z == scalar;
 }
@@ -50,7 +50,7 @@ Vec3 Vec3::operator+(const Vec3& other) const
 {
     return Vec3(x + other.x, y + other.y, z + other.z);
 }
-Vec3 Vec3::operator+(const float& scalar) const
+Vec3 Vec3::operator+(float scalar) const
 {
     return Vec3(x + scalar, y + scalar, z + scalar);
 }
@@ -63,12 +63,12 @@ Vec3 Vec3::operator-(const Vec3& other) const
 {
     return Vec3(x - other.x, y - other.y, z - other.z);
 }
-Vec3 Vec3::operator-(const float& scalar) const
+Vec3 Vec3::operator-(float scalar) const
 {
     return Vec3(x - scalar, y - scalar, z - scalar);
 }
 
-Vec3 Vec3::operator*(const float& scalar) const
+Vec3 Vec3::operator*(float scalar) const
 {
     return Vec3(x * scalar, y * scalar, z * scalar);
 }
@@ -78,7 +78,7 @@ float Vec3::operator*(const Vec3& other) const
     return x * other.x + y * other.y + z * other.z;
 }
 
-Vec3 Vec3::operator/(const float& scalar) const
+Vec3 Vec3::operator/(float scalar) const
 {
     if (scalar == 0.0f) return Vec3();
     return Vec3(x / scalar, y / scalar, z / scalar);
@@ -99,7 +99,7 @@ void Vec3::operator+=(const Vec3& other)
     y += other.y;
     z += other.z;
 }
-void Vec3::operator+=(const float& scalar)
+void Vec3::operator+=(float scalar)
 {
     x += scalar;
     y += scalar;
@@ -112,20 +112,20 @@ void Vec3::operator-=(const Vec3& other)
     y -= other.y;
     z -= other.z;
 }
-void Vec3::operator-=(const float& scalar)
+void Vec3::operator-=(float scalar)
 {
     x -= scalar;
     y -= scalar;
     z -= scalar;
 }
 
-void Vec3::operator*=(const float& scalar)
+void Vec3::operator*=(float scalar)
 {
     x *= scalar;
     y *= scalar;
     z *= scalar;
 }
-void Vec3::operator/=(const float& scalar)
+void Vec3::operator/=(float scalar)
 {
     if (scalar == 0.0f) return;
     x /= scalar;
@@ -169,19 +169,19 @@ std::ostream& operator<<(std::ostream& os, const Vec3& vec3)
     return os;
 }
 
-Vec3 operator+(const float& scalar, const Vec3& vec3)
+Vec3 operator+(float scalar, const Vec3& vec3)
 {
     return vec3 + scalar;
 }
-Vec3 operator-(const float& scalar, const Vec3& vec3)
+Vec3 operator-(float scalar, const Vec3& vec3)
 {
     return Vec3(scalar - vec3.x, scalar - vec3.y, scalar - vec3.z);
 }
-Vec3 operator*(const float& scalar, const Vec3& vec3)
+Vec3 operator*(float scalar, const Vec3& vec3)
 {
     return vec3 * scalar;
 }
-Vec3 operator/(const float& scalar, const Vec3& vec3)
+Vec3 operator/(float scalar, const Vec3& vec3)
 {
     return Vec3(scalar / vec3.x, scalar / vec3.y, scalar / vec3.z);
 }
