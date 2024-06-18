@@ -48,22 +48,16 @@ Vec3 Orientation::up() const
 {
     Vec3 upVector;
     
-    float minusCosRollSinPitch = -cosf32(roll) * sinf32(pitch);
+    float cosRollSinPitch = cosf32(roll) * sinf32(pitch);
     float sinRoll = sinf32(roll);
     float sinYaw = sinf32(yaw);
     float cosYaw = cosf32(yaw);
 
-    // return {
-    //     minusCosRollSinPitch * cosYaw + sinRoll * sinYaw,
-    //     minusCosRollSinPitch * sinYaw - sinRoll * cosYaw,
-    //     cosf32(pitch) * cosf32(roll)
-    // };
-
-    upVector.x = -cosf32(roll) * sinf32(pitch) * cosf32(yaw) + sinf32(roll) * sinf32(yaw);
-    upVector.y = -cosf32(roll) * sinf32(pitch) * sinf32(yaw) - sinf32(roll) * cosf32(yaw);
-    upVector.z = cosf32(pitch) * cosf32(roll);
-
-    return upVector;
+    return {
+        cosRollSinPitch * cosYaw + sinRoll * sinYaw,
+        cosRollSinPitch * sinYaw - sinRoll * cosYaw,
+        cosf32(pitch) * cosf32(roll)
+    };
 }
 
 Orientation Orientation::operator+(const Orientation& other) const

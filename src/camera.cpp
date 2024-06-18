@@ -16,7 +16,7 @@ Camera::Camera(
     if (initWidth == 0) initWidth = 1;
     if (initHeight == 0) initHeight = 1;
 
-    if (!std::isnormal(initHorizontalFOV) or initHorizontalFOV <= 0.0f) initHorizontalFOV = 49.0 * M_PI / 180.0;
+    if (!std::isnormal(initHorizontalFOV) or initHorizontalFOV <= 0.0f) initHorizontalFOV = 49.0f*M_PI/180.0f;
 
     position = initPosition;
     orientation = initOrientation;
@@ -55,9 +55,8 @@ Plane Camera::getTargetPlane() const
     return Plane(corner, edgeX, edgeY);
 }
 
-Ray Camera::getRayToPixel(unsigned int x, unsigned int y) const
+Ray Camera::getRayToPixel(float x, float y) const
 {
-    auto target = targetPlane.corner + targetPlane.edge1 * ((static_cast<float>(x) + 0.5f) / static_cast<float>(width)) + targetPlane.edge2 * ((static_cast<float>(y) + 0.5f) / static_cast<float>(height));
-    auto toTarget = target - position;
-    return Ray(position, toTarget);
+    Vec3 target = targetPlane.corner + targetPlane.edge1 * ((x + 0.5f) / static_cast<float>(width)) + targetPlane.edge2 * ((y + 0.5f) / static_cast<float>(height));
+    return Ray(position, target - position);
 }

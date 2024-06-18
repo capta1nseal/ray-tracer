@@ -17,7 +17,7 @@ public:
     Camera(
         const Vec3& initPosition = Vec3(), const Orientation& initOrientation = Orientation(),
         unsigned int initWidth = 1920, unsigned int initHeight = 1080,
-        float initHorizontalFOV = 49.0*M_PI/180.0
+        float initHorizontalFOV = 49.0f*M_PI/180.0f
     );
 
     float getWidth() const;
@@ -25,7 +25,7 @@ public:
 
     Plane getTargetPlane() const;
 
-    Ray getRayToPixel(unsigned int x, unsigned int y) const;
+    Ray getRayToPixel(float x, float y) const;
 
 private:
     Vec3 position;

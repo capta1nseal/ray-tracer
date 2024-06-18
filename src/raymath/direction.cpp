@@ -32,7 +32,7 @@ Direction::Direction(const Orientation& orientation)
 }
 Direction::Direction(const Vec3& direction)
 {
-    altitude = asin(direction.z);
+    altitude = -asin(direction.z);
 
     azimuth = asin(direction.y / sqrt(direction.x * direction.x + direction.y * direction.y));
 }

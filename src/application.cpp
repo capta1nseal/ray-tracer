@@ -25,9 +25,10 @@ void RayTracerApplication::run()
         frameCount++;
 
         auto camera = Camera(
-            Vec3(-16.0, 7.5, 4.0),
-            Orientation( M_PI * 0.0, M_PI * -0.07, M_PI * -0.15),
-            16 * 7, 9 * 7
+            Vec3(-16.0, 6.0, 2.0),
+            Orientation( M_PI * 0.0, M_PI * 0.04, M_PI * -0.125),
+            16 * 13, 9 * 13,
+            49.0f * M_PI / 180.0f
         );
 
         PrimitiveIntersector intersector;
@@ -35,15 +36,17 @@ void RayTracerApplication::run()
         Ray ray;
         HitInfo hitInfo;
 
+        float terminalFontAspectRatio = 1.7;
+
         for (unsigned int y = camera.getHeight(); y > 0; y--)
         {
-            for (unsigned int x = 0; x < camera.getWidth(); x++)
+            for (unsigned int x = 0; x < camera.getWidth() * terminalFontAspectRatio; x++)
             {
                 bool anyIntersection = false;
                 HitInfo nearestHitInfo;
                 for (const auto& primitive : world.getPrimitives())
                 {
-                    ray = camera.getRayToPixel(x, y);
+                    ray = camera.getRayToPixel(x / terminalFontAspectRatio, y);
                     hitInfo = std::visit(intersector.with(&ray), primitive);
                     if (hitInfo.didHit)
                     {
@@ -56,17 +59,20 @@ void RayTracerApplication::run()
                 }
                 if (anyIntersection)
                 {
-                    float valueOfInterest = nearestHitInfo.normal.x;
-                    if (valueOfInterest < 0.0f) std::cout << "-";
-                    else if (valueOfInterest > 0.0f) std::cout << "+";
-                    else std::cout << "0";
+                    int opacityIndex = 0;
+                    float valueOfInterest;
 
                     valueOfInterest = nearestHitInfo.normal.y;
-                    if (valueOfInterest < 0.0f) std::cout << "-";
-                    else if (valueOfInterest > 0.0f) std::cout << "+";
-                    else std::cout << "0";
+                    if (valueOfInterest >= 0.0f) opacityIndex += 1;
+                    if (valueOfInterest > 0.5f) opacityIndex += 1;
+
+                    valueOfInterest = nearestHitInfo.normal.x;
+                    if (valueOfInterest >= 0.0f) opacityIndex += 1;
+                    if (valueOfInterest > 0.5f) opacityIndex += 1;
+
+                    std::cout << "-+oIX"[opacityIndex];
                 }
-                else std::cout << "  ";
+                else std::cout << " ";
             }
             std::cout << "|\n";
         }

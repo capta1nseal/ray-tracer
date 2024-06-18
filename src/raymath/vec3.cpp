@@ -17,7 +17,7 @@ Vec3::Vec3(float initX, float initY, float initZ)
 }
 Vec3::Vec3(const Direction& direction)
 {
-    z = sinf32(direction.altitude);
+    z = sinf32(-direction.altitude);
 
     // x here temporarily stands for length of the direction vector projected onto the XY plane.
     x = cosf32(direction.altitude);
@@ -28,7 +28,7 @@ Vec3::Vec3(const Direction& direction)
 }
 Vec3::Vec3(const Orientation& orientation)
 {
-    z = sinf32(orientation.pitch);
+    z = sinf32(-orientation.pitch);
     // x here temporarily stands for length of the direction vector projected onto the XY plane.
     x = cosf32(orientation.pitch);
 
