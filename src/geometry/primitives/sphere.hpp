@@ -40,13 +40,15 @@ struct Sphere
         // Attempt to optimize by returning early if ray doesn't intersect 2D outline.
         if (midDifference > radius) return hitInfo;
 
-        hitInfo.didHit = true;
-
         ResultType halfDepth = std::sqrt(radius * radius - midDifference * midDifference);
 
         hitInfo.distance = midDistance - halfDepth;
         // Select exit point if ray origin inside sphere.
         hitInfo.distance = (hitInfo.distance <= ResultType(0.0)) ? hitInfo.distance + ResultType(2.0) * halfDepth : hitInfo.distance;
+
+        if (hitInfo.distance <= ResultType(0.0)) return hitInfo;
+
+        hitInfo.didHit = true;
 
         hitInfo.hitPoint = ray.origin + hitInfo.distance * ray.direction;
         

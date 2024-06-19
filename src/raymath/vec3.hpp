@@ -133,6 +133,18 @@ struct Vec3
         return (*this) * (T(1.0) / length);
     }
 
+    // normal expected has a dot product with this direction vector <(/=) 0.0
+    void reflect(const Vec3<T> normal)
+    {
+        (*this) = 2.0 * (normal * (*this)) * normal - (*this);
+    }
+    // normal expected has a dot product with this direction vector <(/=) 0.0
+    template<Vec3Basis U> auto reflected(const Vec3<U> normal)
+    {
+        return 2.0 * (normal * (*this)) * normal - (*this);
+    }
+
+
     void sanitize()
     {
         if (!std::isnormal(x)) x = T(0.0);

@@ -47,6 +47,9 @@ public:
         aspectRatio(other.aspectRatio), horizontalFOV(other.horizontalFOV), verticalFOV(other.verticalFOV)
         {}
 
+    const Vec3<T>& getPosition() const { return position; }
+    const Orientation<T>& getOrientation() const { return orientation; }
+
     T getWidth() const { return width; }
     T getHeight() const { return height; }
 
