@@ -35,18 +35,24 @@ struct Sphere
 
         ResultType midDistance = toCenter * ray.direction;
 
-        ResultType midDifference = std::sqrt(toCenter * toCenter - midDistance * midDistance);
+        // squared to compare lengths without expensive sqrt
+        ResultType midDifferenceSquared = toCenter * toCenter - midDistance * midDistance;
+
+        // squared to compare lengths without expensive sqrt
+        float radiusSquared = radius * radius;
 
         // Attempt to optimize by returning early if ray doesn't intersect 2D outline.
-        if (midDifference > radius) return hitInfo;
+        if (midDifferenceSquared > radiusSquared) return hitInfo;
 
-        ResultType halfDepth = std::sqrt(radius * radius - midDifference * midDifference);
+        ResultType halfDepth = std::sqrt(radiusSquared - midDifferenceSquared);
 
-        hitInfo.distance = midDistance - halfDepth;
-        // Select exit point if ray origin inside sphere.
-        hitInfo.distance = (hitInfo.distance <= ResultType(0.0)) ? hitInfo.distance + ResultType(2.0) * halfDepth : hitInfo.distance;
+        // Select exit point first to check if ray origin is too far forward.
+        hitInfo.distance = midDistance + halfDepth;
 
         if (hitInfo.distance <= ResultType(0.0)) return hitInfo;
+
+        // Select entry point if ray origin is behind it.
+        hitInfo.distance = (hitInfo.distance > halfDepth + halfDepth) ? hitInfo.distance - (halfDepth + halfDepth) : hitInfo.distance;
 
         hitInfo.didHit = true;
 
