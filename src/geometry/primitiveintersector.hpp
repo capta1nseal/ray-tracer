@@ -2,26 +2,28 @@
 #define _RAYTRACERPRIMITIVEINTERSECTOR_
 
 
-#include <type_traits>
-
-#include "../raymath/ray.hpp"
-#include "../raymath/hitinfo.hpp"
+#include "../raymath/raymath.hpp"
 #include "primitives/primitives.hpp"
 
 
 /*
 Visitor means to be used with std::visit, in order to calculate the ray intersection of a ray with a Primitive
 */
+template<Vec3Basis T>
 struct PrimitiveIntersector
 {
-    Ray* ray;
+    Ray<T>* ray;
 
-    PrimitiveIntersector();
+    PrimitiveIntersector() : ray(nullptr) {}
 
-    PrimitiveIntersector& with(Ray* newRay);
+    PrimitiveIntersector& with(Ray<T>* newRay)
+    {
+        ray = newRay;
+        return *this;
+    }
 
-    template<isPrimitive T>
-    HitInfo operator()(const T& primitive)
+    template<isPrimitive U>
+    auto operator()(const U& primitive)
     {
         return primitive.intersectRay(*ray);
     }

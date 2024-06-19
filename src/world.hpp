@@ -16,11 +16,11 @@ class World
 public:
     World();
 
-    const std::vector<Primitive>& getPrimitives() const;
+    const std::vector<Primitive<double>>& getPrimitives() const;
 
 private:
     unsigned int primitiveCount;
-    std::vector<Primitive> primitives;
+    std::vector<Primitive<double>> primitives;
 };
 
 

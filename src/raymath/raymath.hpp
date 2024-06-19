@@ -8,9 +8,9 @@ Headers in this directory shouldn't include other headers from this project, to 
 */
 
 
+#include "vec3.hpp"
 #include "direction.hpp"
 #include "orientation.hpp"
-#include "vec3.hpp"
 #include "ray.hpp"
 #include "hitinfo.hpp"
 
