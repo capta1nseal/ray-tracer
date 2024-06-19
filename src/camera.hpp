@@ -62,7 +62,6 @@ public:
         Vec3<T> forwardVec = orientation.forward();
         Vec3<T> upVec = orientation.up();
         Vec3<T> rightVec = upVec % forwardVec;
-        // right direction would require an actual 3D rotation transform to calculate without cross product
 
         Vec3<T> toCorner = forwardVec * toPlane + rightVec * -toLeft + upVec * -toBottom;
 
