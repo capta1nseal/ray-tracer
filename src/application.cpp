@@ -91,6 +91,11 @@ void RayTracerApplication::run()
                     }
                     if (!anyOcclusion) lightLevel += diffuse + specular;
 
+
+                    double gamma = 1.0;
+                    lightLevel = std::pow(lightLevel, 1.0 / gamma);
+
+
                     unsigned int nearestOpacityIndex = 0;
                     double nearestOpacityDifference = 2.0;
 
