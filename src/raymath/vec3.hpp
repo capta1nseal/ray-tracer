@@ -31,19 +31,19 @@ struct Vec3
     template<Vec3Basis U> bool operator==(const Vec3<U>& other) const
     { return x == other.x and y == other.y and z == other.z; }
 
-    template<Vec3Basis U> bool operator==(U scalar) const
+    template<Vec3Basis U = T> bool operator==(U scalar) const
     { return x == scalar and y == scalar and z == scalar; }
 
     template<Vec3Basis U> auto operator+(const Vec3<U>& other) const
     { return Vec3<std::common_type_t<T, U>>(x + other.x, y + other.y, z + other.z); }
 
-    template<Vec3Basis U> auto operator+(U scalar) const
+    template<Vec3Basis U = T> auto operator+(U scalar) const
     { return Vec3<std::common_type_t<T, U>>(x + scalar, y + scalar, z + scalar); }
 
     template<Vec3Basis U> auto operator-(const Vec3<U>& other) const
     { return Vec3<std::common_type_t<T, U>>(x - other.x, y - other.y, z - other.z); }
 
-    template<Vec3Basis U> auto operator-(U scalar) const
+    template<Vec3Basis U = T> auto operator-(U scalar) const
     { return Vec3<std::common_type_t<T, U>>(x - scalar, y - scalar, z - scalar); }
 
     Vec3<T> operator-() const { return Vec3<T>(-x, -y, -z); }
@@ -52,10 +52,10 @@ struct Vec3
     template<Vec3Basis U> auto operator*(const Vec3<U>& other) const
     { return x * other.x + y * other.y + z * other.z; }
 
-    template<Vec3Basis U> auto operator*(U scalar) const
+    template<Vec3Basis U = T> auto operator*(U scalar) const
     { return Vec3<std::common_type_t<T, U>>(x * scalar, y * scalar, z * scalar); }
 
-    template<Vec3Basis U> auto operator/(U scalar) const
+    template<Vec3Basis U = T> auto operator/(U scalar) const
     { return Vec3<std::common_type_t<T, U>>(x / scalar, y / scalar, z / scalar); }
 
     // operator% is cross product. operator* is dot product.
@@ -75,7 +75,7 @@ struct Vec3
         z += other.z;
         return *this;
     }
-    template<Vec3Basis U> Vec3& operator+=(U scalar)
+    template<Vec3Basis U = T> Vec3& operator+=(U scalar)
     {
         x += scalar;
         y += scalar;
@@ -90,7 +90,7 @@ struct Vec3
         z -= other.z;
         return *this;
     }
-    template<Vec3Basis U> Vec3& operator-=(U scalar)
+    template<Vec3Basis U = T> Vec3& operator-=(U scalar)
     {
         x -= scalar;
         y -= scalar;
@@ -98,14 +98,14 @@ struct Vec3
         return *this;
     }
 
-    template<Vec3Basis U> Vec3& operator*=(U scalar)
+    template<Vec3Basis U = T> Vec3& operator*=(U scalar)
     {
         x *= scalar;
         y *= scalar;
         z *= scalar;
         return *this;
     }
-    template<Vec3Basis U> Vec3& operator/=(U scalar)
+    template<Vec3Basis U = T> Vec3& operator/=(U scalar)
     {
         x /= scalar;
         y /= scalar;
@@ -159,7 +159,7 @@ template<Vec3Basis T> std::ostream& operator<<(std::ostream& os, const Vec3<T>& 
     return os;
 }
 
-template<Vec3Basis T, Vec3Basis U> auto operator*(U scalar, const Vec3<T>& vec3)
+template<Vec3Basis T, Vec3Basis U = T> auto operator*(U scalar, const Vec3<T>& vec3)
 { return vec3 * scalar; }
 
 #endif
