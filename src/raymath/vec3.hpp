@@ -14,9 +14,9 @@ sanitize() method provided for value sanity.
 Any attempt to divide by zero, including zero length normalization, will result in zero.
 */
 
+
 template<typename T>
 concept Vec3Basis = std::is_floating_point_v<T>;
-
 
 template<Vec3Basis T>
 struct Vec3
@@ -98,6 +98,23 @@ struct Vec3
         return *this;
     }
 
+    // multiplicative assignment is an element-wise multiplication by other's elements, not dot product.
+    template<Vec3Basis U> Vec3& operator*=(const Vec3<U>& other)
+    {
+        x *= other.x;
+        y *= other.y;
+        z *= other.z;
+        return *this;
+    }
+    // divisive assignment is an element-wise division by other's elements, not some special operation.
+    template<Vec3Basis U> Vec3& operator/=(const Vec3<U>& other)
+    {
+        x /= other.x;
+        y /= other.y;
+        z /= other.z;
+        return *this;
+    }
+
     template<Vec3Basis U = T> Vec3& operator*=(U scalar)
     {
         x *= scalar;
@@ -121,7 +138,10 @@ struct Vec3
     {
         T length = (*this)();
         if (length == T(0.0) or length == T(1.0)) return;
-        (*this) *= T(1.0) / length;
+        length = T(1.0) / length;
+        x *= length;
+        y *= length;
+        z *= length;
     }
     Vec3 normalized() const
     {
@@ -136,12 +156,12 @@ struct Vec3
     // normal expected has a dot product with this direction vector <(/=) 0.0
     void reflect(const Vec3<T> normal)
     {
-        (*this) = 2.0 * (normal * (*this)) * normal - (*this);
+        (*this) = 2.0 * (normal * -(*this)) * normal + (*this);
     }
     // normal expected has a dot product with this direction vector <(/=) 0.0
     template<Vec3Basis U> auto reflected(const Vec3<U> normal)
     {
-        return 2.0 * (normal * (*this)) * normal - (*this);
+        return 2.0 * (normal * -(*this)) * normal + (*this);
     }
 
 

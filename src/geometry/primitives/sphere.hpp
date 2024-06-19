@@ -39,7 +39,7 @@ struct Sphere
         ResultType midDifferenceSquared = toCenter * toCenter - midDistance * midDistance;
 
         // squared to compare lengths without expensive sqrt
-        float radiusSquared = radius * radius;
+        ResultType radiusSquared = radius * radius;
 
         // Attempt to optimize by returning early if ray doesn't intersect 2D outline.
         if (midDifferenceSquared > radiusSquared) return hitInfo;

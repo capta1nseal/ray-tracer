@@ -9,44 +9,52 @@
 
 World::World()
 {
-    primitives.reserve(5);
+    primitives.reserve(6);
     primitiveCount += 1;
     primitives.push_back(
         Plane(
-            Vec3(-2.0f, 0.0f,-4.0f),
-            Vec3( 2.0f, 0.0f, 4.0f),
-            Vec3( 2.0f, 0.0f, 1.0f)
+            Vec3(-15.0, 0.0, 0.0),
+            Vec3(15.0,-15.0, 0.0),
+            Vec3(15.0, 15.0, 0.0)
         )
     );
     primitiveCount += 1;
     primitives.push_back(
         Plane(
-            Vec3( 2.0f, 0.0f,-4.0f),
-            Vec3(-2.0f, 0.0f, 4.0f),
-            Vec3(-2.0f, 0.0f, 1.0f)
+            Vec3(-2.0, 0.0, 0.0),
+            Vec3( 2.0, 0.0, 4.0),
+            Vec3( 2.0, 0.0, 1.0)
         )
     );
     primitiveCount += 1;
     primitives.push_back(
         Plane(
-            Vec3( 0.0f,-2.0f,-4.0f),
-            Vec3( 0.0f, 2.0f, 4.0f),
-            Vec3( 0.0f, 2.0f, 1.0f)
+            Vec3( 2.0, 0.0, 0.0),
+            Vec3(-2.0, 0.0, 4.0),
+            Vec3(-2.0, 0.0, 1.0)
         )
     );
     primitiveCount += 1;
     primitives.push_back(
         Plane(
-            Vec3( 0.0f, 2.0f,-4.0f),
-            Vec3( 0.0f,-2.0f, 4.0f),
-            Vec3( 0.0f,-2.0f, 1.0f)
+            Vec3( 0.0,-2.0, 0.0),
+            Vec3( 0.0, 2.0, 4.0),
+            Vec3( 0.0, 2.0, 1.0)
+        )
+    );
+    primitiveCount += 1;
+    primitives.push_back(
+        Plane(
+            Vec3( 0.0, 2.0, 0.0),
+            Vec3( 0.0,-2.0, 4.0),
+            Vec3( 0.0,-2.0, 1.0)
         )
     );
     primitiveCount += 1;
     primitives.push_back(
         Sphere(
-            Vec3( 0.0f, 0.0f, 1.5f),
-            1.5f
+            Vec3( 0.0, 0.0, 5.5),
+            1.5
         )
     );
     primitives.resize(primitiveCount);

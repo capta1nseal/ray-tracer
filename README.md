@@ -32,8 +32,7 @@ Notable implemented features:
 #### geometry
 
 For now, the following definitions are used as geometric ground truth:
-- An orientation of 0,0,0 (roll,pitch,yaw) is towards positive x, with positive y to the right, and positive z up.
+- An orientation of 0,0,0 (roll,pitch,yaw) is towards positive x, with positive y to the left, and positive z up.
 - roll is anticlockwise facing positive x, pitch is anticlockwise facing positive y, yaw is anticlockwise facing positive z.
 - yaw is applied first, then pitch, then roll.
 - azimuth is a synonym for yaw, altitude is a synonym for pitch.
-    - altitude, like pitch, is probably opposite to expected, being anticlockwise facing positive y.
