@@ -3,6 +3,7 @@
 
 
 #include <vector>
+#include <ostream>
 
 #include "raymath/vec3.hpp"
 
@@ -21,12 +22,17 @@ public:
     
     Vec3<double> at(unsigned int x, unsigned int y) const;
 
+    unsigned int getWidth() const { return width; }
+    unsigned int getHeight() const { return height; }
+
 private:
     unsigned int width, height;
 
     std::vector<unsigned int> accessCountBuffer;
     std::vector<Vec3<double>> frame;
 };
+
+std::ostream& operator<<(std::ostream& os, const Frame& frame);
 
 
 #endif

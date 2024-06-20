@@ -9,10 +9,10 @@ It then follows that the priorities of this project are:
 
 ## project state
 
-The backbone of a ray tracer has been built and is ready for proper bounce lighting.
-By default, a basic scene with a sphere above some planar shapes is drawn with phong shading and path-traced shadows.
-The output is currently outputted to the terminal as ASCII, with compensation for the difference between character width and height.
-Even in the terminal, it has some decent dynamic range through a float-ASCII brightness lookup.
+Currently, the project is a fully-implemented raytracer, fully inside the terminal.
+By default, a basic scene is rendered and displayed to the terminal.
+Each character is treated as 1 pixel, and 3x8-bit colour is used and assumed to be supported.
+There is basic compensation for the difference between character width and height.
 
 ### technical details
 
@@ -24,9 +24,8 @@ Notable implemented features:
 - Basic 3D geometric primitives.
     - Their ray intersection algorithms.
     - Templates for higher floating point precision.
-    - Some tools to store and access arbitrary primitives in the same std::vector.
-- Some classes encapsulating those types to create behaviour.
-    - Templated where it makes sense.
+    - Some tools to store and access arbitrary primitives in one std::vector.
+- Some classes encapsulating those types that then store and render the scene.
 - Shading model and demo rendering is now in the application wrapper, and will later be encapsulated into computation and graphics interface classes.
 
 #### geometry

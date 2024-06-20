@@ -4,23 +4,31 @@
 
 #include <vector>
 
-#include "raymath/raymath.hpp"
-#include "geometry/geometry.hpp"
+#include "primitiveobject.hpp"
 
 
 /*
 Wrapper for all scene geometry and materials.
+Currently only holds primitive objects' geometry, since there are no normal models (yet).
 */
 class World
 {
 public:
     World();
 
-    const std::vector<Primitive<double>>& getPrimitives() const;
+    void addPrimitiveObject(const PrimitiveObject<double>& primitiveObject);
+
+    // Attempt to reserve space for n primitive objects than currently stored.
+    void reservePrimitiveObjects(std::size_t n);
+
+    // Attempt to shrink all dynamically allocated lists containing data to their precise size, trimming off all excess capacity.
+    // Useful if a bunch of space has been reserved through reservation methods but then never used.
+    void shrinkToFit();
+
+    const std::vector<PrimitiveObject<double>>& getPrimitiveObjects() const;
 
 private:
-    unsigned int primitiveCount;
-    std::vector<Primitive<double>> primitives;
+    std::vector<PrimitiveObject<double>> primitiveObjects;
 };
 
 
