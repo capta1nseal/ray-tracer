@@ -2,7 +2,7 @@
 #define _RAYTRACERAPPLICATION_
 
 
-#include "world.hpp"
+#include "scene.hpp"
 
 
 /*
@@ -16,7 +16,7 @@ public:
     void run();
 
 private:
-    World world;
+    Scene scene;
 };
 
 

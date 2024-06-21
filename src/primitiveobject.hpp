@@ -16,6 +16,10 @@ public:
     template<isPrimitive U>
     PrimitiveObject(U initPrimitive, Material initMaterial)
         : primitive(initPrimitive), material(initMaterial) {}
+    // Cast from different precision of primitiveObject.
+    template<Vec3Basis U>
+    PrimitiveObject(const PrimitiveObject<U>& other)
+        : primitive(other.primitive), material(other.material) {}
 
     const auto& getPrimitive() const
     {

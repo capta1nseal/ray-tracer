@@ -20,16 +20,15 @@ template<Vec3Basis T>
 using Primitive = std::variant<Plane<T>, Sphere<T>>;
 
 // A way to create a type constraint for a specialization of a template.
-template<typename T, template<typename> class Template>
+template<template<typename> class Template, typename T>
 struct is_specialization_of : std::false_type { };
 
-template<typename T, template<typename> class Template>
-struct is_specialization_of<Template<T>, Template> : std::true_type { };
+template<template<typename> class Template, typename T>
+struct is_specialization_of<Template, Template<T>> : std::true_type { };
 
 // All primitives implement HitInfo intersectRay(const Ray& ray).
 template<typename T>
-concept isPrimitive = is_specialization_of<T, Plane>::value || is_specialization_of<T, Sphere>::value;
+concept isPrimitive = is_specialization_of<Plane, T>::value || is_specialization_of<Sphere, T>::value;
 
 
 #endif
-

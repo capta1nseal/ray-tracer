@@ -18,7 +18,7 @@ class Frame
 public:
     Frame(unsigned int initWidth, unsigned int initHeight);
 
-    void add(unsigned int x, unsigned int y, const Vec3<double>& newValue);
+    void addSample(unsigned int x, unsigned int y, const Vec3<double>& newValue);
     
     Vec3<double> at(unsigned int x, unsigned int y) const;
 

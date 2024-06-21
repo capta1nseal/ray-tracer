@@ -14,9 +14,12 @@ sanitize() method provided for value sanity.
 Any attempt to divide by zero, including zero length normalization, will result in zero.
 */
 
+template<typename T>
+struct is_vec3basis : std::is_floating_point<T> { };
+
 
 template<typename T>
-concept Vec3Basis = std::is_floating_point_v<T>;
+concept Vec3Basis = is_vec3basis<T>::value;
 
 template<Vec3Basis T>
 struct Vec3

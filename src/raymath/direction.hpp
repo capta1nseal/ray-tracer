@@ -38,9 +38,9 @@ struct Direction
     // direction given must be normalized.
     template<Vec3Basis U> Direction(const Vec3<U>& direction)
     {
-        altitude = std::asin(-direction.z);
+        altitude = std::asin(direction.z);
 
-        azimuth = std::asin(direction.y / std::cos(altitude));
+        azimuth = -std::asin(direction.y / std::cos(altitude));
     }
 
     void sanitize()

@@ -1,8 +1,14 @@
 #include "vec3.hpp"
 
 
+template<Vec3Basis T>
+auto sumElements(const Vec3<T>& vector)
+{
+    return vector.x + vector.y + vector.z;
+}
+
 template<Vec3Basis T, Vec3Basis U>
-auto multiplyElements(const Vec3<T>& first, const Vec3<U> second)
+auto multiplyElements(const Vec3<T>& first, const Vec3<U>& second)
 {
     return Vec3<std::common_type_t<T, U>>(first.x * second.x, first.y * second.y, first.z * second.z);
 }
@@ -14,12 +20,12 @@ auto lerp(const Vec3<T>& first, const Vec3<U>& second, std::common_type_t<T, U> 
 }
 
 template<Vec3Basis T>
-Vec3<T> clamp(const Vec3<T>& value, T min, T max)
+Vec3<T> clamp(const Vec3<T>& vector, T min, T max)
 {
     return Vec3<T>(
-        std::clamp(value.x, min, max),
-        std::clamp(value.y, min, max),
-        std::clamp(value.z, min, max)
+        std::clamp(vector.x, min, max),
+        std::clamp(vector.y, min, max),
+        std::clamp(vector.z, min, max)
     );
 }
 

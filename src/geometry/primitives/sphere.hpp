@@ -49,7 +49,7 @@ struct Sphere
         // Select exit point first to check if ray origin is too far forward.
         hitInfo.distance = midDistance + halfDepth;
 
-        if (hitInfo.distance <= ResultType(0.0)) return hitInfo;
+        if (hitInfo.distance <= ResultType(1.0e-9)) return hitInfo;
 
         // Select entry point if ray origin is behind it.
         hitInfo.distance = (hitInfo.distance > halfDepth + halfDepth) ? hitInfo.distance - (halfDepth + halfDepth) : hitInfo.distance;

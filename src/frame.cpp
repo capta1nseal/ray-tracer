@@ -21,7 +21,7 @@ Frame::Frame(unsigned int initWidth, unsigned int initHeight)
     frame.resize(width * height, Vec3<double>(0.0, 0.0, 0.0));
 }
 
-void Frame::add(unsigned int x, unsigned int y, const Vec3<double>& newValue)
+void Frame::addSample(unsigned int x, unsigned int y, const Vec3<double>& newValue)
 {
     if (x > width - 1 or y > height - 1) return;
 

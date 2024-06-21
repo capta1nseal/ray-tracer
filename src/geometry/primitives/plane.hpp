@@ -41,7 +41,7 @@ struct Plane
 
         hitInfo.distance = (hitInfo.normal * (corner - ray.origin)) / hitInfo.distance;
 
-        if (hitInfo.distance <= ResultType(0.0)) return hitInfo;
+        if (hitInfo.distance <= ResultType(1.0e-9)) return hitInfo;
 
         // Temporarily represents local coordinates of hitPoint.
         hitInfo.hitPoint = ray.origin + (ray.direction * hitInfo.distance) - corner;

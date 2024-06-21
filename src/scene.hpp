@@ -11,10 +11,10 @@
 Wrapper for all scene geometry and materials.
 Currently only holds primitive objects' geometry, since there are no normal models (yet).
 */
-class World
+class Scene
 {
 public:
-    World();
+    Scene();
 
     void addPrimitiveObject(const PrimitiveObject<double>& primitiveObject);
 

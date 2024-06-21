@@ -1,4 +1,4 @@
-#include "world.hpp"
+#include "scene.hpp"
 
 
 #include <vector>
@@ -8,7 +8,7 @@
 #include "geometry/geometry.hpp"
 
 
-World::World()
+Scene::Scene()
 {
     // TODO remove all this code that just instantiates the demo scene.
     // Implement within application somehow, potentially in an encapsulated scene loading component.
@@ -37,6 +37,15 @@ World::World()
         {1.0, 1.0, 1.0},
         0.9,
         0.9,
+        0.0
+    };
+    
+    Material mirrorMaterial = {
+        {0.0, 0.0, 0.0},
+        {1.0, 1.0, 1.0},
+        {0.0, 0.0, 0.0},
+        1.0,
+        1.0,
         0.0
     };
 
@@ -89,22 +98,22 @@ World::World()
     ));
 }
 
-void World::addPrimitiveObject(const PrimitiveObject<double>& primitiveObject)
+void Scene::addPrimitiveObject(const PrimitiveObject<double>& primitiveObject)
 {
     primitiveObjects.push_back(primitiveObject);
 }
 
-void World::reservePrimitiveObjects(std::size_t n)
+void Scene::reservePrimitiveObjects(std::size_t n)
 {
     primitiveObjects.reserve(primitiveObjects.size() + n);
 }
 
-void World::shrinkToFit()
+void Scene::shrinkToFit()
 {
     primitiveObjects.shrink_to_fit();
 }
 
-const std::vector<PrimitiveObject<double>>& World::getPrimitiveObjects() const
+const std::vector<PrimitiveObject<double>>& Scene::getPrimitiveObjects() const
 {
     return primitiveObjects;
 }
