@@ -3,6 +3,7 @@
 
 
 #include "vec3.hpp"
+#include "../material.hpp"
 
 
 /*
@@ -21,7 +22,8 @@ struct HitInfo
     Vec3<T> hitPoint;
     // Normal vector in direction of incoming ray.
     Vec3<T> normal;
-    // TODO implement material
+    // Material holding basic material properties.
+    Material material;
 
     HitInfo()
     {
