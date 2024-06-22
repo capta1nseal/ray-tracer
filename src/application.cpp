@@ -36,7 +36,7 @@ void RayTracerApplication::run()
 
     PrimitiveIntersector<double> intersector;
 
-    unsigned int maxSamples = 4096;
+    unsigned int maxSamples = 16384;
 
     unsigned int frameFrequency = 128;
 
