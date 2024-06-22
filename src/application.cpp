@@ -36,7 +36,7 @@ void RayTracerApplication::run()
 
     PrimitiveIntersector<double> intersector;
 
-    unsigned int maxSamples = 1024;
+    unsigned int maxSamples = 4096;
 
     unsigned int frameFrequency = 128;
 
@@ -51,9 +51,6 @@ void RayTracerApplication::run()
     // Sun radius is its angular radius in rad.
     double sunRadius = 0.5 * M_PI / 180.0 * sunRadiusScale;
     double cosSunRadius = std::cos(sunRadius);
-
-    double sunSampleProbability = 1.0;
-
 
     unsigned int maxBounces = 12;
 
@@ -83,9 +80,6 @@ void RayTracerApplication::run()
                 Vec3<double> rayColor = {1.0, 1.0, 1.0};
                 Vec3<double> incomingLight = {0.0, 0.0, 0.0};
 
-                unsigned int sunSampleCount = 0;
-                Vec3<double> sunSampleLight = {0.0, 0.0, 0.0};
-
                 for (unsigned int currentBounce = 0; currentBounce <= maxBounces; currentBounce++)
                 {
                     anyIntersection = false;
@@ -108,42 +102,6 @@ void RayTracerApplication::run()
                     // The following applies the current material model to the ray colour and incoming light.
                     if (anyIntersection)
                     {
-                        if (sunSampleProbability >= unitDistribution(randomEngine))
-                        {
-                            Vec3<double> sunSampleDirection = sunDirection;
-                            double yaw = angleDistribution(randomEngine);
-                            double pitch = M_PI / 2.0 - sunRadius * std::sqrt(unitDistribution(randomEngine));
-                            Vec3<double> uniformSphericalForwardVector;
-                            uniformSphericalForwardVector.x = std::sin(pitch);
-                            uniformSphericalForwardVector.z = std::cos(pitch);
-                            uniformSphericalForwardVector.y = std::sin(yaw) * uniformSphericalForwardVector.z;
-                            uniformSphericalForwardVector.z = std::cos(yaw) * uniformSphericalForwardVector.z;
-                            Orientation<double> uniformSphericalForwardOrientation = uniformSphericalForwardVector;
-                            sunSampleDirection = (Orientation<double>(sunSampleDirection) + uniformSphericalForwardOrientation).forward();
-                            Ray<double> sunRay = Ray(nearestHitInfo.hitPoint, sunSampleDirection);
-                            HitInfo<double> sunTraceHitInfo;
-                            // The area of a full sphere in steradians is 4pi.
-                            // The area of a circle projected from the center of that sphere is pi*theta*theta
-                            // So the probability of being within the circle when sampling uniformly is the area of the circle over the full area.
-                            double sunSampleChanceWithin = sunRadius * sunRadius * 0.5;
-
-                            for (const auto& PrimitiveObject : scene.getPrimitiveObjects())
-                            {
-                                sunTraceHitInfo = std::visit(intersector.with(&sunRay), PrimitiveObject.getPrimitive());
-
-                                if (sunTraceHitInfo.didHit) break;
-                            }
-
-                            if (!sunTraceHitInfo.didHit)
-                            {
-                                sunSampleCount += 1;
-                                sunSampleLight += multiplyElements(multiplyElements(sunEmissionColor * sunEmissionStrength, rayColor), nearestHitInfo.material.color * (1.0 - nearestHitInfo.material.specularProbability)) * 
-                                    std::max(sunSampleDirection * nearestHitInfo.normal, 0.0) *
-                                    sunSampleChanceWithin * M_PI *
-                                    (1.0 - nearestHitInfo.material.specularProbability);
-                            }
-                        }
-
                         bool isSpecularBounce = nearestHitInfo.material.specularProbability >= unitDistribution(randomEngine);
                         // Randomly generated direction of diffuse bounce.
                         // This generates a normalized vector in a uniform spherical distribution 
@@ -185,7 +143,7 @@ void RayTracerApplication::run()
                     }
                 }
 
-                Vec3<double> newFrameColor = (incomingLight + sunSampleLight);
+                Vec3<double> newFrameColor = incomingLight;
                 frame.addSample(x, y, newFrameColor);
             }
         }
