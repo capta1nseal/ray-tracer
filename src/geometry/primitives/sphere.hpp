@@ -32,33 +32,29 @@ struct Sphere
         HitInfo<ResultType> hitInfo;
 
         Vec3<ResultType> toCenter = center - ray.origin;
-
         ResultType midDistance = toCenter * ray.direction;
 
-        // squared to compare lengths without expensive sqrt
+        // Squared to compare lengths without expensive sqrt.
         ResultType midDifferenceSquared = toCenter * toCenter - midDistance * midDistance;
-
-        // squared to compare lengths without expensive sqrt
         ResultType radiusSquared = radius * radius;
 
-        // Attempt to optimize by returning early if ray doesn't intersect 2D outline.
+        // Return early if ray doesn't intersect forwards or backwards.
         if (midDifferenceSquared > radiusSquared) return hitInfo;
 
         ResultType halfDepth = std::sqrt(radiusSquared - midDifferenceSquared);
 
-        // Select exit point first to check if ray origin is too far forward.
-        hitInfo.distance = midDistance + halfDepth;
+        // Select entry point if it's in front of the ray origin, otherwise exit point.
+        // Tolerance of a picometer to avoid light leaking.
+        hitInfo.distance = (midDistance > halfDepth + ResultType(1.0e-12)) ? midDistance - halfDepth : midDistance + halfDepth;
 
-        if (hitInfo.distance <= ResultType(1.0e-9)) return hitInfo;
-
-        // Select entry point if ray origin is behind it.
-        hitInfo.distance = (hitInfo.distance > halfDepth + halfDepth) ? hitInfo.distance - (halfDepth + halfDepth) : hitInfo.distance;
+        // Treat as non-intersection if ray origin is too close to surface.
+        if (hitInfo.distance <= ResultType(1.0e-12)) return hitInfo;
 
         hitInfo.didHit = true;
-
         hitInfo.hitPoint = ray.origin + hitInfo.distance * ray.direction;
-        
-        hitInfo.normal = (hitInfo.hitPoint - center).normalized();
+
+        // Normal facing in if ray origin inside sphere, otherwise out.
+        hitInfo.normal = (midDistance > halfDepth) ? (hitInfo.hitPoint - center) * (1.0 / radius) : (center - hitInfo.hitPoint) * (1.0 / radius);
 
         return hitInfo;
     }

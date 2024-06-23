@@ -67,7 +67,7 @@ void RayTracerApplication::run()
         sampleCount++;
 
 
-        for (int y = 0; y < terminalHeight; y++)
+        for (unsigned int y = 0; y < terminalHeight; y++)
         {
             for (unsigned int x = 0; x < terminalWidth; x++)
             {
@@ -139,12 +139,11 @@ void RayTracerApplication::run()
                         }
 
                         incomingLight += multiplyElements(emittedLight, rayColor);
-                        break;
+                        currentBounce = maxBounces;
                     }
                 }
 
-                Vec3<double> newFrameColor = incomingLight;
-                frame.addSample(x, y, newFrameColor);
+                frame.addSample(x, y, incomingLight);
             }
         }
 

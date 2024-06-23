@@ -49,7 +49,7 @@ char valueToChar(double value)
     unsigned int nearestIndex = 0;
     double nearestOpacityDifference = 2.0;
 
-    for (int i = values.size() - 1; i > -1; i--)
+    for (unsigned int i = 0; i < values.size(); i++)
     {
         double difference = std::abs(value - values[i]);
         if (difference < nearestOpacityDifference)
@@ -67,43 +67,36 @@ std::ostream& operator<<(std::ostream& os, const Frame& frame)
     unsigned int width = frame.getWidth();
     unsigned int height = frame.getHeight();
 
-    double gamma = 2.5;
-
-    std::string boldCode = "\033[1m";
-    std::string foreGroundCode = "\033[38;2;0;0;0m";
+    // background code with 48, foreground code with 38
     std::string backGroundCode = "\033[48;2;0;0;0m";
     std::string resetCode = "\033[0m";
 
     std::string output = "";
+    std::string row;
 
     // 8-bit RGB colour representation.
     std::string red8, green8, blue8;
 
-    double brightness;
-    double charFactor;
-
     Vec3<double> accumulatedColor;
 
-    for (int y = height - 1; y > -1; y--)
+    for (unsigned int y = 0; y < height; y++)
     {
-        for (int x = 0; x < width; x++)
+        row = "";
+
+        for (unsigned int x = 0; x < width; x++)
         {
             accumulatedColor = frame.at(x, y);
-
-            brightness = std::clamp(mean(accumulatedColor), 0.0, 1.0);
-            charFactor = std::pow(brightness, 1.0 / gamma);
 
             red8 = asString(std::min(static_cast<int>(accumulatedColor.x * 255), 255));
             green8 = asString(std::min(static_cast<int>(accumulatedColor.y * 255), 255));
             blue8 = asString(std::min(static_cast<int>(accumulatedColor.z * 255), 255));
 
             // TODO implement some drawing method taking advantage of coloured characters over the background colour.
-            // foreGroundCode = "\033[38;2;" + red8 + ";" + green8 + ";" + blue8 + "m";
             backGroundCode = "\033[48;2;" + red8 + ";" + green8 + ";" + blue8 + "m";
 
-            output += backGroundCode + " ";
+            row += backGroundCode + " ";
         }
-        output += resetCode + "\n" + boldCode + backGroundCode;
+        output = row + resetCode + "\n" + output;
     }
 
     output += resetCode;
