@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "primitiveobject.hpp"
+#include "environment.hpp"
 
 
 /*
@@ -27,8 +28,12 @@ public:
 
     const std::vector<PrimitiveObject<double>>& getPrimitiveObjects() const;
 
+    Vec3<double> getEnvironmentEmission(const Vec3<double>& direction) const;
+
 private:
     std::vector<PrimitiveObject<double>> primitiveObjects;
+
+    Environment environment;
 };
 
 

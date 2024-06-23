@@ -29,12 +29,14 @@ Vec3<T> clamp(const Vec3<T>& vector, T min, T max)
     );
 }
 
-// Reflects dir off normal's origin.
-// Expects dir to be facing in to normal's origin
+// Reflects direction off normal's origin.
+// Expects direction to be facing in to normal's origin
 template<Vec3Basis T, Vec3Basis U>
-auto reflect(const Vec3<T>& dir, const Vec3<U>& normal)
+auto reflect(const Vec3<T>& direction, const Vec3<U>& normal)
 {
-    return dir.reflected(normal);
+    return Vec3<std::common_type_t<T, U>>(
+        2.0 * (normal * -direction) * normal + direction
+    );
 }
 
 // Returns number out of x,y,z with greatest magnitude.

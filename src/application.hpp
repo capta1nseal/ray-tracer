@@ -2,7 +2,9 @@
 #define _RAYTRACERAPPLICATION_
 
 
+#include "camera.hpp"
 #include "scene.hpp"
+#include "raytracer.hpp"
 
 
 /*
@@ -17,6 +19,12 @@ public:
 
 private:
     Scene scene;
+    Camera<double> camera;
+    RayTracer rayTracer;
+
+    void initializeScene();
+    void initializeCamera();
+    void initializeRayTracer();
 };
 
 

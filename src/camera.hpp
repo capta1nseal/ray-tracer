@@ -20,7 +20,7 @@ class Camera
 public:
     Camera(
         const Vec3<T>& initPosition = {}, const Orientation<T>& initOrientation = {},
-        unsigned int initWidth = 1920, unsigned int initHeight = 1080,
+        unsigned int initWidth = 16, unsigned int initHeight = 9,
         T initHorizontalFOV = {49.0*M_PI/180.0}, T relativePixelHeight = T(1.0)
     )
     {
@@ -47,7 +47,7 @@ public:
         targetPlaneSet = true;
 
         std::random_device randomDevice;
-        gen.seed(randomDevice());
+        randomEngine.seed(randomDevice());
         subPixelDistribution = std::uniform_real_distribution<T>(0.0, 1.0);
     }
     template<Vec3Basis U> Camera(const Camera<U>& other)
@@ -88,8 +88,8 @@ public:
     Ray<T> getRayToPixel(unsigned int x, unsigned int y) const
     {
         return getRayToSubPixel(
-            (T(x) + T(0.5)) / T(width),
-            (T(y) + T(0.5)) / T(height)
+            T(x) + T(0.5),
+            T(y) + T(0.5)
         );
     }
     // Get a ray from camera position pointing towards a raydom sub-pixel position within the given pixel.
@@ -97,8 +97,8 @@ public:
     Ray<T> getRandomRayToPixel(unsigned int x, unsigned int y)
     {
         return getRayToSubPixel(
-            (T(x) + subPixelDistribution(gen)) / T(width),
-            (T(y) + subPixelDistribution(gen)) / T(height)
+            T(x) + subPixelDistribution(randomEngine),
+            T(y) + subPixelDistribution(randomEngine)
         );
     }
     // Get a ray from camera position pointing towards a sub-pixel position:
@@ -107,7 +107,7 @@ public:
     {
         return {
             position,
-            ((targetPlane.corner - position) + targetPlane.edge1 * x + targetPlane.edge2 * y).normalized()
+            ((targetPlane.corner - position) + targetPlane.edge1 * (x / T(width)) + targetPlane.edge2 * (y / T(height))).normalized()
         };
     }
 
@@ -129,7 +129,7 @@ private:
     bool targetPlaneSet;
     Plane<T> targetPlane;
 
-    std::mt19937 gen;
+    std::mt19937 randomEngine;
     std::uniform_real_distribution<T> subPixelDistribution;
 };
 
