@@ -135,10 +135,12 @@ void RayTracerApplication::run()
     {
         rayTracer.sampleFrame();
 
-        if ((sampleCount - 1) % frameFrequency == 0 or sampleCount == maxSamples) std::cout << rayTracer.getFrame();
+        if ((sampleCount - 1) % frameFrequency == 0) std::cout << rayTracer.getFrame();
         
         if (sampleCount >= maxSamples) running = false;
     }
+
+    std::cout << rayTracer.getFrame();
 
     auto frameDuration = (clock.now() - start).count() / static_cast<double>(rayTracer.getSampleCount());
 

@@ -19,7 +19,7 @@ RayTracer::RayTracer(Scene& initScene, Camera<double>& initCamera)
     unitDistribution(0.0, 1.0), trigDistribution(-1.0, 1.0), angleDistribution(-pi, pi)
 {
     sampleCount = 0;
-    maxSamples = 16384;
+    maxSamples = 4096;
     maxBounces = 12;
 }
 
