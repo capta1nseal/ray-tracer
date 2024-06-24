@@ -3,7 +3,7 @@
 
 
 /*
-wrapper for all implemented geometry types
+Wrapper for all implemented geometric types and operations.
 */
 
 

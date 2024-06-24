@@ -10,6 +10,7 @@
 #include "geometry/geometry.hpp"
 #include "material.hpp"
 #include "frame.hpp"
+#include "raymath/usefulfunctions.hpp"
 
 
 RayTracerApplication::RayTracerApplication()
@@ -125,24 +126,32 @@ void RayTracerApplication::run()
 
     unsigned int frameFrequency = 128;
 
-    start = clock.now();
-
     const unsigned int& sampleCount = rayTracer.getSampleCount();
     const unsigned int& maxSamples = rayTracer.getMaxSamples();
+
+    start = clock.now();
 
     bool running = true;
     while (running)
     {
         rayTracer.sampleFrame();
 
-        if ((sampleCount - 1) % frameFrequency == 0) std::cout << rayTracer.getFrame();
+        // Draw frame at power of two sample counts for rapid initial noise reduction,
+        // then at frameFrequency interval once it is reached.
+        if (
+            (sampleCount < frameFrequency and isZeroOrPowerOfTwo(sampleCount)) or
+            (sampleCount) % frameFrequency == 0
+        )
+            std::cout << rayTracer.getFrame();
         
         if (sampleCount >= maxSamples) running = false;
     }
 
+    // Ensure that the final image gets displayed,
+    // mostly for cases where maxSamples % frameFrequency != 0.
     std::cout << rayTracer.getFrame();
 
-    auto frameDuration = (clock.now() - start).count() / static_cast<double>(rayTracer.getSampleCount());
+    auto meanSampleDuration = (clock.now() - start).count() / static_cast<double>(rayTracer.getSampleCount());
 
-    std::cout << "Average frame duration was: " << frameDuration / 1e6 << " ms\n";
+    std::cout << "Average sample duration was: " << meanSampleDuration / 1e6 << " ms\n";
 }

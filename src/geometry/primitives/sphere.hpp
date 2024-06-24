@@ -8,9 +8,9 @@
 
 
 /*
-Geometric sphere in 3D space.
+3D sphere implementation.
 Implements ray intersection.
-Values passed in must be normal floating point values.
+Values passed are expected to actually represent numbers.
 */
 template<Vec3Basis T>
 struct Sphere

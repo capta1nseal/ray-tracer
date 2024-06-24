@@ -8,7 +8,7 @@
 
 
 /*
-Geometric parallelogram on a plane.
+Geometric planar parallelogram.
 Implements ray intersection.
 */
 template<Vec3Basis T>

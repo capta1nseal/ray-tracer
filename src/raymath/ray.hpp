@@ -17,7 +17,7 @@ struct Ray
 {
     Vec3<T> origin, direction;
 
-    // initDirection must be normalized.
+    // initDirection expected to be normalized.
     Ray(const Vec3<T>& initOrigin = {}, const Vec3<T>& initDirection = {1.0, 0.0, 0.0})
         : origin(initOrigin), direction(initDirection) {}
     

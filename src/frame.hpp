@@ -10,8 +10,10 @@
 
 /*
 Basic colour storage class.
-Stores one std::vector<Vec3<double>> that accumulates all colours added per pixel.
-They are averaged using a buffer of n. accesses / pixel only upon returning.
+Stores one std::vector<Vec3<double>> that is a sum of all colours added per pixel,
+    and a partner std::vector<unsigned int> of addition counts.
+Using at(x,y) divides that value by a count of additions, so the storage appears to be averaged.
+This implementation info could be useful info if you run into unexpected behaviour.
 */
 class Frame
 {
@@ -28,7 +30,7 @@ public:
 private:
     unsigned int width, height;
 
-    std::vector<unsigned int> accessCountBuffer;
+    std::vector<unsigned int> additionCountBuffer;
     std::vector<Vec3<double>> frame;
 };
 

@@ -7,7 +7,7 @@
 
 
 /*
-Visitor means to be used with std::visit, in order to calculate the ray intersection of a ray with a Primitive
+Visitor meant to be used with std::visit, in order to calculate the ray intersection of a Ray with a Primitive.
 */
 template<Vec3Basis T>
 struct PrimitiveIntersector

@@ -6,6 +6,11 @@
 #include "geometry/primitives/primitives.hpp"
 
 
+/*
+Wrapper for a Primitive and material.
+Simple to pack into an std::vector.
+A visitor such as in geometry/primitiveintersector.hpp is required with std::visit to access Primitive methods.
+*/
 template<Vec3Basis T>
 class PrimitiveObject
 {

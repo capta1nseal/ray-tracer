@@ -7,9 +7,9 @@
 
 
 /*
-Wrapper for necessary information to get out of a ray intersection check.
+Wrapper for information about a ray intersection.
 Should be the return type for any ray intersection.
-If didHit is false, assume all other members to be invalid.
+If didHit is false, assume all other values to be invalid.
 */
 template<Vec3Basis T>
 struct HitInfo
@@ -22,7 +22,7 @@ struct HitInfo
     Vec3<T> hitPoint;
     // Normal vector in direction of incoming ray.
     Vec3<T> normal;
-    // Material holding basic material properties.
+    // Holds basic material properties.
     Material material;
 
     HitInfo()

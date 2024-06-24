@@ -5,12 +5,16 @@
 #include "raymath/vec3.hpp"
 
 
+/*
+Wrapper for parameters of the environment texture,
+and a method to get the incoming light from a given direction.
+*/
 class Environment
 {
 public:
     Environment();
 
-    // Get environment emission in direction.
+    // Get the incoming light from the environment from specified direction.
     Vec3<double> getEmission(const Vec3<double>& direction) const;
 
 private:

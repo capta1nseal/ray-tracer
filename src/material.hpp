@@ -5,6 +5,9 @@
 #include "raymath/vec3.hpp"
 
 
+/*
+Wrapper for data used in the basic material model.
+*/
 struct Material
 {
     Vec3<double> color;

@@ -13,10 +13,9 @@ const double tau = 2.0 * pi;
 
 
 /*
-azimuth and altitude will be between -pi and pi.
-Any value passed into the initializer will be converted correctly from rad to [-pi, pi] rad.
-Do conversions between degrees and rad yourself.
-Call sanitize() if you have any doubt about floating point garbage states.
+3D direction implementation.
+Range of angles is [-pi,pi]
+Call sanitize() in case edge-case floating point values must be avoided.
 */
 template<Vec3Basis T>
 struct Direction

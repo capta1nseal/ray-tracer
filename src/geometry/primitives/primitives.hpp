@@ -3,7 +3,7 @@
 
 
 /*
-Wrapper header for primitive geometric shapes, and useful definitions for working with their types.
+Wrapper header for primitive geometric shapes, and useful definitions for working with them.
 */
 
 

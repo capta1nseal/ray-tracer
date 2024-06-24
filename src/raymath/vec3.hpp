@@ -8,12 +8,6 @@
 #include <ostream>
 
 
-/*
-3D vector with x, y and z of templated floating point type
-sanitize() method provided for value sanity.
-Any attempt to divide by zero, including zero length normalization, will result in zero.
-*/
-
 template<typename T>
 struct is_vec3basis : std::is_floating_point<T> { };
 
@@ -21,6 +15,12 @@ struct is_vec3basis : std::is_floating_point<T> { };
 template<typename T>
 concept Vec3Basis = is_vec3basis<T>::value;
 
+
+/*
+3D vector with x, y and z of templated floating point precision type.
+sanitize() method provided for when value sanity is important.
+normalize and normalized methods will explicitly check for 0 and 1-length vectors.
+*/
 template<Vec3Basis T>
 struct Vec3
 {
@@ -59,7 +59,7 @@ struct Vec3
     { return Vec3<std::common_type_t<T, U>>(x * scalar, y * scalar, z * scalar); }
 
     template<Vec3Basis U = T> auto operator/(U scalar) const
-    { return Vec3<std::common_type_t<T, U>>(x / scalar, y / scalar, z / scalar); }
+    { return Vec3<std::common_type_t<T, U>>((*this) * T(1.0 / scalar)); }
 
     // operator% is cross product. operator* is dot product.
     template<Vec3Basis U> auto operator%(const Vec3<U>& other) const
@@ -127,9 +127,10 @@ struct Vec3
     }
     template<Vec3Basis U = T> Vec3& operator/=(U scalar)
     {
-        x /= scalar;
-        y /= scalar;
-        z /= scalar;
+        scalar = 1.0 / scalar;
+        x *= scalar;
+        y *= scalar;
+        z *= scalar;
         return *this;
     }
 

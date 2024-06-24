@@ -12,12 +12,15 @@
 #include "material.hpp"
 
 
+/*
+Wrapper class for ray bouncing, sample generation and ray-traced rendering.
+*/
 class RayTracer
 {
 public:
     RayTracer(Scene& initScene, Camera<double>& initCamera);
 
-    // Run whenever anything about camera changed, or the camera changes completely
+    // Run whenever anything about camera changed, or the camera changes completely.
     void setCamera(Camera<double>& newCamera);
 
     // Generates at least one sample per pixel.
@@ -29,7 +32,7 @@ public:
 
     const Frame& getFrame() const;
 
-    // Generate outgoing ray direction based on incoming ray, surface normal and material properties
+    // Generate outgoing ray direction based on incoming ray, surface normal and material properties.
     Vec3<double> bounceRay(const Vec3<double>& incomingRay, const Vec3<double>& normal, bool isSpecularBounce, double materialSmoothness);
 
     Vec3<double> getRandomUniformDirectionSphere();
