@@ -30,18 +30,19 @@ void RayTracer::setCamera(Camera<double>& newCamera)
     sampleCount = 0;
 }
 
+void RayTracer::setMaxSamples(unsigned int newMaxSamples)
+{
+    maxSamples = newMaxSamples;
+}
+
 void RayTracer::sampleFrame()
 {
     sampleCount++;
 
     Ray<double> cameraRay;
-    Ray<double> ray;
-    bool anyIntersection;
     HitInfo<double> hitInfo;
     HitInfo<double> nearestHitInfo;
 
-    Vec3<double> rayColor;
-    Vec3<double> incomingLight;
 
     unsigned int width = frame.getWidth();
     unsigned int height = frame.getHeight();
@@ -51,55 +52,64 @@ void RayTracer::sampleFrame()
         for (unsigned int y = 0; y < height; y++)
         {
             cameraRay = camera.getRayToSubPixel(x + unitDistribution(randomEngine), y + unitDistribution(randomEngine));
-            ray = cameraRay;
 
-            anyIntersection = false;
-
-            rayColor = {1.0, 1.0, 1.0};
-            incomingLight = {0.0, 0.0, 0.0};
-            
-            for (unsigned int currentBounce = 0; currentBounce <= maxBounces; currentBounce++)
-            {
-                anyIntersection = false;
-                nearestHitInfo = {};
-                hitInfo = {};
-
-                for (const auto& primitiveObject : scene.getPrimitiveObjects())
-                {
-                    hitInfo = std::visit(primitiveIntersector.with(&ray), primitiveObject.getPrimitive());
-
-                    if (hitInfo.didHit)
-                    {
-                        hitInfo.material = primitiveObject.getMaterial();
-                        anyIntersection = true;
-                        if (nearestHitInfo.didHit == false or hitInfo.distance < nearestHitInfo.distance)
-                        {
-                            nearestHitInfo = hitInfo;
-                        }
-                    }
-                }
-
-                if (anyIntersection)
-                {
-                    // Emission is easy.
-                    incomingLight += multiplyElements(rayColor, nearestHitInfo.material.emissionColor * nearestHitInfo.material.emissionStrength);
-                    bool isSpecularBounce = nearestHitInfo.material.specularProbability >= unitDistribution(randomEngine);
-                    rayColor *= isSpecularBounce ? nearestHitInfo.material.specularColor : nearestHitInfo.material.color;
-                    // Set next ray's origin and direction.
-                    ray.direction = bounceRay(ray.direction, nearestHitInfo.normal, isSpecularBounce, nearestHitInfo.material.smoothness);
-                    ray.origin = nearestHitInfo.hitPoint;
-                }
-                else
-                {
-                    incomingLight += multiplyElements(scene.getEnvironmentEmission(ray.direction), rayColor);
-                    currentBounce = maxBounces;
-                }
-            }
-
-            frame.addSample(x, y, incomingLight);
+            frame.addSample(x, y, traceRay(cameraRay, maxBounces));
         }
     }
 }
+
+Vec3<double> RayTracer::traceRay(Ray<double> ray, unsigned int depthLeft)
+{
+    HitInfo<double> hitInfo, nearestHitInfo = {};
+
+    for (const auto& primitiveObject : scene.getPrimitiveObjects())
+    {
+        hitInfo = std::visit(primitiveIntersector.with(&ray), primitiveObject.getPrimitive());
+
+        if (hitInfo.didHit)
+        {
+            if (nearestHitInfo.didHit == false or hitInfo.distance < nearestHitInfo.distance)
+            {
+                nearestHitInfo = hitInfo;
+                nearestHitInfo.material = primitiveObject.getMaterial();
+            }
+        }
+    }
+
+    if (nearestHitInfo.didHit)
+    {
+        Vec3<double> emittedLight = nearestHitInfo.material.emissionColor * nearestHitInfo.material.emissionStrength;
+
+        if (depthLeft == 0u) return emittedLight;
+
+        bool isSpecularBounce = nearestHitInfo.material.specularProbability >= unitDistribution(randomEngine);
+
+        return emittedLight + multiplyElements(
+            traceRay(
+                Ray(
+                    nearestHitInfo.hitPoint,
+                    bounceDirection(ray.direction, nearestHitInfo.normal, isSpecularBounce, nearestHitInfo.material.smoothness)
+                ),
+                depthLeft - 1
+            ),
+            isSpecularBounce ? nearestHitInfo.material.specularColor : nearestHitInfo.material.color
+        );
+    }
+    else
+    {
+        return scene.getEnvironmentEmission(ray.direction);
+    }
+}
+
+Vec3<double> RayTracer::bounceDirection(const Vec3<double>& incomingRay, const Vec3<double>& normal, bool isSpecularBounce, double materialSmoothness)
+{
+    Vec3<double> diffuseDirection = getRandomBiasedDirectionHemisphere(normal);
+    // If the reflection is determined to not be specular, just return diffuse direction.
+    if (!isSpecularBounce) return diffuseDirection;
+    // TODO find out exactly what this simulates, why and how it lines up with reality.
+    return lerp(diffuseDirection, reflect(incomingRay, normal), materialSmoothness).normalized();
+}
+
 
 const unsigned int& RayTracer::getSampleCount() const
 {
@@ -113,15 +123,6 @@ const unsigned int& RayTracer::getMaxSamples() const
 const Frame& RayTracer::getFrame() const
 {
     return frame;
-}
-
-Vec3<double> RayTracer::bounceRay(const Vec3<double>& incomingRay, const Vec3<double>& normal, bool isSpecularBounce, double materialSmoothness)
-{
-    Vec3<double> diffuseDirection = getRandomBiasedDirectionHemisphere(normal);
-    // If the reflection is determined to not be specular, just return diffuse direction.
-    if (!isSpecularBounce) return diffuseDirection;
-    // TODO find out exactly what this simulates, why and how it lines up with reality.
-    return lerp(diffuseDirection, reflect(incomingRay, normal), materialSmoothness).normalized();
 }
 
 Vec3<double> RayTracer::getRandomUniformDirectionSphere()

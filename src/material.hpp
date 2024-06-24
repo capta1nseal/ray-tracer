@@ -7,6 +7,9 @@
 
 /*
 Wrapper for data used in the basic material model.
+Has constant equidirectional emission.
+Random chance decides whether ray bounce is diffuse or specular.
+Specular direction are lerped towards cosine-biased directions by 1 - smoothness.
 */
 struct Material
 {

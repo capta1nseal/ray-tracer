@@ -103,8 +103,8 @@ void RayTracerApplication::initializeCamera()
 {
     double terminalFontAspectRatio = 1.8;
 
-    unsigned int terminalWidth = (16 * 8) * terminalFontAspectRatio;
-    unsigned int terminalHeight = 9 * 8;
+    unsigned int terminalWidth = (16 * 13) * terminalFontAspectRatio;
+    unsigned int terminalHeight = 9 * 13;
 
     camera = Camera<double>(
         Vec3(-17.0, 7.0, 10.0),
@@ -117,6 +117,7 @@ void RayTracerApplication::initializeCamera()
 void RayTracerApplication::initializeRayTracer()
 {
     rayTracer.setCamera(camera);
+    rayTracer.setMaxSamples(4096);
 }
 
 void RayTracerApplication::run()
