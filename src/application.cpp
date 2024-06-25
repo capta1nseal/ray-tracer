@@ -101,16 +101,21 @@ void RayTracerApplication::initializeScene()
 
 void RayTracerApplication::initializeCamera()
 {
-    double terminalFontAspectRatio = 1.8;
+    double terminalCharHeight = 1.8;
 
-    unsigned int terminalWidth = (16 * 13) * terminalFontAspectRatio;
-    unsigned int terminalHeight = 9 * 13;
+    double terminalScale = 8.2;
+
+    unsigned int terminalWidth = 16;
+    unsigned int terminalHeight = 9;
+
+    terminalWidth *= terminalScale * terminalCharHeight;
+    terminalHeight *= terminalScale;
 
     camera = Camera<double>(
         Vec3(-17.0, 7.0, 10.0),
         Orientation( M_PI * 0.0, M_PI * -0.11, M_PI * 0.125),
         terminalWidth, terminalHeight,
-        45.0 * M_PI / 180.0, terminalFontAspectRatio
+        55.0 * M_PI / 180.0, terminalCharHeight
     );
 }
 
