@@ -106,15 +106,16 @@ void RayTracerApplication::initializeCamera()
     unsigned int terminalWidth = 16;
     unsigned int terminalHeight = 9;
 
-    // Character height defined as constnant until it can be dynamically determined.
+    // Character height defined as constant until it can be dynamically determined.
     double terminalCharHeight = 1.8;
 
     // Amount to scale up aspect ratio by.
-    // Total width in characters will be initial terminalWidth * terminalScale.
+    // Width in characters is floor(terminalWidth * terminalScale).
+    // Height in characters is floor(terminalHeight * (terminalScale / terminalCharHeight)).
     double terminalScale = 12;
 
     terminalWidth *= terminalScale;
-    terminalHeight *= terminalScale * (1.0 / terminalCharHeight);
+    terminalHeight *= terminalScale / terminalCharHeight;
 
     camera = Camera<double>(
         Vec3(-17.0, 7.0, 10.0),
