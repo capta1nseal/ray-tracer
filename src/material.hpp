@@ -26,11 +26,17 @@ struct Material
     );
 
     // Sample a microfacet normal according to the GGX NDF.
-    // Requires a uniform random angle in [-pi,pi] and a uniform random value in [0,1]
-    Direction<double> sampleNormal(double yaw, double pitchFactor) const;
+    // Returns only the pitch relative to normal, yaw can be sampled uniformly.
+    // Requires a uniform random value in [0,1]
+    double sampleNormal(double pitchFactor) const;
     // Calculate the GGX normal distribution function.
     // Independent of yaw, since it is sampled uniformly.
-    double NDF(double pitch) const;
+    double NDF(double normalPitch) const;
+    // Calculate the PDF of a sample generated.
+    // Based upon the GGX normal distribution function.
+    // Requires the pitch of the sample relative to macrosurface normal,
+    // and the dot product between the outgoing direction and the microsurface normal.
+    double PDF(double samplePitch, double outDotNormal) const;
 };
 
 

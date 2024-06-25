@@ -16,17 +16,19 @@ Material::Material(
     : color(initColor), specularColor(initSpecularColor), emissionColor(initEmissionColor), specularProbability(initSpecularProbability), smoothness(initSmoothness), emissionStrength(initEmissionStrength)
 {}
 
-Direction<double> Material::sampleNormal(double yaw, double pitchFactor) const
+double Material::sampleNormal(double pitchFactor) const
 {
-    return {
-        yaw,
-        std::atan(smoothness * std::sqrt(pitchFactor / (1.0 - pitchFactor)))
-    };
+    std::atan(smoothness * std::sqrt(pitchFactor / (1.0 - pitchFactor)));
 }
 
-double Material::NDF(double pitch) const
+double Material::NDF(double normalPitch) const
 {
-    double cosPitch = std::cos(pitch);
+    double cosPitch = std::cos(normalPitch);
     double temp = (smoothness * smoothness - 1) * cosPitch * cosPitch + 1;
-    return (smoothness * smoothness * cosPitch * std::sin(pitch)) / (pi * temp * temp);
+    return (smoothness * smoothness * cosPitch * std::sin(normalPitch)) / (pi * temp * temp);
+}
+
+double Material::PDF(double samplePitch, double outDotNormal) const
+{
+    return NDF(samplePitch) / (4.0 * outDotNormal);
 }
