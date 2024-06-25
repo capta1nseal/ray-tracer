@@ -97,6 +97,24 @@ void RayTracerApplication::initializeScene()
         ),
         ballMaterial
     ));
+
+    // Test for rotation around axis.
+
+    Vec3<double> sphereCenter = {0.0, 0.0, 5.0};
+    Vec3<double> firstBallDelta = {-5.0, 0.0, 0.0};
+    Vec3<double> axis = Vec3(-0.1, 0.2, 1.0).normalized();
+    firstBallDelta = axis % (firstBallDelta % axis);
+
+    for (double angle = 0.0; angle < tau - 0.001; angle += tau * (1.0 / 15.0))
+    {
+        scene.addPrimitiveObject(PrimitiveObject<double>(
+            Sphere(
+                sphereCenter + rotateAroundUnit(firstBallDelta, axis, angle),
+                0.75
+            ),
+            ballMaterial
+        ));
+    }
 }
 
 void RayTracerApplication::initializeCamera()
@@ -112,7 +130,7 @@ void RayTracerApplication::initializeCamera()
     // Amount to scale up aspect ratio by.
     // Width in characters is floor(terminalWidth * terminalScale).
     // Height in characters is floor(terminalHeight * (terminalScale / terminalCharHeight)).
-    double terminalScale = 12;
+    double terminalScale = 23.63;
 
     terminalWidth *= terminalScale;
     terminalHeight *= terminalScale / terminalCharHeight;
@@ -128,7 +146,7 @@ void RayTracerApplication::initializeCamera()
 void RayTracerApplication::initializeRayTracer()
 {
     rayTracer.setCamera(camera);
-    rayTracer.setMaxSamples(4096);
+    rayTracer.setMaxSamples(16384);
 }
 
 void RayTracerApplication::run()

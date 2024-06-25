@@ -6,10 +6,7 @@
 #include <cmath>
 
 #include "vec3.hpp"
-
-
-const double pi = M_PI;
-const double tau = 2.0 * pi;
+#include "constants.hpp"
 
 
 /*
@@ -52,6 +49,15 @@ struct Direction
         forwardVec.x = std::cos(azimuth) * forwardVec.x;
 
         return forwardVec;
+    }
+
+    template<Vec3Basis U>
+    auto operator+(const Direction<U> other)
+    {
+        return Direction<std::common_type_t<T, U>>(
+            azimuth + other.azimuth,
+            altitude + other.altitude
+        );
     }
 
     void conformAngles()

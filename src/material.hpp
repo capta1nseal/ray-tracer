@@ -3,13 +3,13 @@
 
 
 #include "raymath/vec3.hpp"
+#include "raymath/direction.hpp"
 
 
 /*
 Wrapper for data used in the basic material model.
 Has constant equidirectional emission.
-Random chance decides whether ray bounce is diffuse or specular.
-Specular direction are lerped towards cosine-biased directions by 1 - smoothness.
+Represents a microfacet shading model using the GGX NDF and sampling accordingly.
 */
 struct Material
 {
@@ -24,6 +24,13 @@ struct Material
         Vec3<double> initColor = {0.8, 0.8, 0.8}, Vec3<double> initSpecularColor = {0.8, 0.8, 0.8}, Vec3<double> initEmissionColor = {0.8, 0.8, 0.8},
         double initSpecularProbability = {0.5}, double initSmoothness = {0.5}, double initEmissionStrength = {0.0}
     );
+
+    // Sample a microfacet normal according to the GGX NDF.
+    // Requires a uniform random angle in [-pi,pi] and a uniform random value in [0,1]
+    Direction<double> sampleNormal(double yaw, double pitchFactor) const;
+    // Calculate the GGX normal distribution function.
+    // Independent of yaw, since it is sampled uniformly.
+    double NDF(double pitch) const;
 };
 
 

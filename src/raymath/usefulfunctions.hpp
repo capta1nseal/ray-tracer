@@ -3,6 +3,8 @@
 
 
 #include "vec3.hpp"
+#include "direction.hpp"
+#include "orientation.hpp"
 
 
 /*
@@ -92,6 +94,42 @@ template<Vec3Basis T>
 T meanMagnitude(const Vec3<T>& vector)
 {
     return (std::abs(vector.x) + std::abs(vector.y) + std::abs(vector.z)) * T(oneThird);
+}
+
+// Returns vector rotated around axis anticlockwise by angle.
+template<Vec3Basis T, Vec3Basis U>
+auto rotateAround(const Vec3<T>& vector, const Vec3<U>& axis, std::common_type_t<T, U> angle)
+{
+    using ResultType = std::common_type_t<T, U>;
+    // Component of vector parallel to axis.
+    Vec3<ResultType> parallelComponent = ((vector * axis) / (axis * axis)) * axis;
+    // Component of vector perpendicular to axis.
+    Vec3<ResultType> perpendicularComponent = vector - parallelComponent;
+    // Vector perpendicular to perpendicular to axis and perpendicularComponent.
+    Vec3<ResultType> thirdComponent = axis % perpendicularComponent;
+
+    // sqrt of proportion between square lengths saves a sqrt compared to two magnitude calculations.
+    return
+        parallelComponent +
+        std::cos(angle) * perpendicularComponent +
+        std::sin(-angle) * std::sqrt((perpendicularComponent * perpendicularComponent) / (thirdComponent * thirdComponent)) * thirdComponent;
+}
+// rotateAround requiring unit axis, saving some compute and memory.
+// Returns vector rotated around axis anticlockwise by angle.
+template<Vec3Basis T, Vec3Basis U>
+auto rotateAroundUnit(const Vec3<T>& vector, const Vec3<U>& axis, std::common_type_t<T, U> angle)
+{
+    using ResultType = std::common_type_t<T, U>;
+    // Component of vector parallel to axis.
+    Vec3<ResultType> parallelComponent = (vector * axis) * axis;
+    // Component of vector perpendicular to axis.
+    Vec3<ResultType> perpendicularComponent = vector - parallelComponent;
+    // Save memory just calculating third perpendicular component inline.
+
+    return
+        parallelComponent +
+        (std::cos(angle) * perpendicularComponent) +
+        (std::sin(-angle) * (axis % perpendicularComponent));
 }
 
 
