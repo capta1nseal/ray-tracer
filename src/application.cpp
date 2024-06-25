@@ -101,12 +101,14 @@ void RayTracerApplication::initializeScene()
 
 void RayTracerApplication::initializeCamera()
 {
-    double terminalCharHeight = 1.8;
-
-    double terminalScale = 8.2;
+    // Define terminal aspect ratio, then scale taking character height into account.
 
     unsigned int terminalWidth = 16;
     unsigned int terminalHeight = 9;
+
+    double terminalCharHeight = 1.8;
+
+    double terminalScale = 6.9;
 
     terminalWidth *= terminalScale * terminalCharHeight;
     terminalHeight *= terminalScale;
@@ -115,7 +117,7 @@ void RayTracerApplication::initializeCamera()
         Vec3(-17.0, 7.0, 10.0),
         Orientation( M_PI * 0.0, M_PI * -0.11, M_PI * 0.125),
         terminalWidth, terminalHeight,
-        55.0 * M_PI / 180.0, terminalCharHeight
+        45.0 * M_PI / 180.0, terminalCharHeight
     );
 }
 
