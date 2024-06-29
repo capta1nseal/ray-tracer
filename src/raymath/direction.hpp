@@ -26,12 +26,12 @@ struct Direction
     }
     template<Vec3Basis U> Direction(const Direction<U>& other)
         : azimuth(other.azimuth), altitude(other.altitude) {}
-    // direction given must be normalized.
-    template<Vec3Basis U> Direction(const Vec3<U>& direction)
+    // direction vector given must be normalized.
+    template<Vec3Basis U> Direction(const Vec3<U>& vector)
     {
-        altitude = std::asin(direction.z);
+        altitude = std::asin(vector.z);
 
-        azimuth = -std::asin(direction.y / std::cos(altitude));
+        azimuth = (vector.z >= (1.0 - 1e-9)) ? 0.0 : std::atan2(-vector.y, vector.x);
     }
 
     // returns normalized vector pointing forwards

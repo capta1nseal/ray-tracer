@@ -7,8 +7,7 @@
 #include <sstream>
 #include <cmath>
 
-#include "raymath/vec3.hpp"
-#include "raymath/usefulfunctions.hpp"
+#include "raymath/raymath.hpp"
 
 
 Frame::Frame(unsigned int initWidth, unsigned int initHeight)
@@ -88,9 +87,9 @@ std::ostream& operator<<(std::ostream& os, const Frame& frame)
         {
             accumulatedColor = frame.at(x, y);
 
-            red8 = asString(std::min(static_cast<int>(accumulatedColor.x * 255), 255));
-            green8 = asString(std::min(static_cast<int>(accumulatedColor.y * 255), 255));
-            blue8 = asString(std::min(static_cast<int>(accumulatedColor.z * 255), 255));
+            red8 = asString(std::clamp(static_cast<int>(accumulatedColor.x * 255), 0, 255));
+            green8 = asString(std::clamp(static_cast<int>(accumulatedColor.y * 255), 0, 255));
+            blue8 = asString(std::clamp(static_cast<int>(accumulatedColor.z * 255), 0, 255));
 
             // TODO implement some drawing method taking advantage of coloured characters over the background colour.
             backGroundCode = "\033[48;2;" + red8 + ";" + green8 + ";" + blue8 + "m";

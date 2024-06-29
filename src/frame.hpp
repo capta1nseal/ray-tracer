@@ -5,7 +5,7 @@
 #include <vector>
 #include <ostream>
 
-#include "raymath/vec3.hpp"
+#include "raymath/raymath.hpp"
 
 
 /*

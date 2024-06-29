@@ -59,12 +59,23 @@ Vec3<T> clamp(const Vec3<T>& vector, T min, T max)
 }
 
 // Reflects direction off normal's origin.
-// Preferable should have negative dot product with direction, but still works inverted.
+// Where direction faces into normal.
+// Returns direction with same origin as normal.
 template<Vec3Basis T, Vec3Basis U>
 auto reflect(const Vec3<T>& direction, const Vec3<U>& normal)
 {
     return Vec3<std::common_type_t<T, U>>(
         2.0 * (normal * -direction) * normal + direction
+    );
+}
+// Reflects direction over normal's origin.
+// Where direction and normal have the same origin.
+// Returns direction with same origin as normal.
+template<Vec3Basis T, Vec3Basis U>
+auto reflectOut(const Vec3<T>& direction, const Vec3<U>& normal)
+{
+    return Vec3<std::common_type_t<T, U>>(
+        2.0 * (normal * direction) * normal - direction
     );
 }
 
@@ -112,7 +123,7 @@ auto rotateAround(const Vec3<T>& vector, const Vec3<U>& axis, std::common_type_t
     return
         parallelComponent +
         std::cos(angle) * perpendicularComponent +
-        std::sin(-angle) * std::sqrt((perpendicularComponent * perpendicularComponent) / (thirdComponent * thirdComponent)) * thirdComponent;
+        std::sin(angle) * std::sqrt((perpendicularComponent * perpendicularComponent) / (thirdComponent * thirdComponent)) * thirdComponent;
 }
 // rotateAround requiring unit axis, saving some compute and memory.
 // Returns vector rotated around axis anticlockwise by angle.
@@ -129,7 +140,32 @@ auto rotateAroundUnit(const Vec3<T>& vector, const Vec3<U>& axis, std::common_ty
     return
         parallelComponent +
         (std::cos(angle) * perpendicularComponent) +
-        (std::sin(-angle) * (axis % perpendicularComponent));
+        (std::sin(angle) * (axis % perpendicularComponent));
+}
+// Returns vector pitched upwards relative to xy plane by pitch,
+// this new vector is then rotated around itself anticlockwise by yaw.
+template<Vec3Basis T>
+auto rotateAroundSelf(const Vec3<T>& vector, T yaw, T pitch)
+{
+    double length = vector();
+    return rotateAround(
+        (Direction<T>(vector * (1.0 / length)) + Direction<T>(0.0, pitch)).forward() * length,
+        vector,
+        yaw
+    );
+}
+// rotateAroundSelf requiring unit vector, saving some compute and memory.
+// Returns vector pitched upwards relative to xy plane by pitch,
+// this new vector is then rotated around itself anticlockwise by yaw.
+template<Vec3Basis T>
+auto rotateAroundSelfUnit(const Vec3<T>& vector, T yaw, T pitch)
+{
+    auto direction = Direction<T>(vector);
+    return rotateAroundUnit(
+        Direction<T>(direction.azimuth, direction.altitude + pitch).forward(),
+        vector,
+        yaw
+    );
 }
 
 

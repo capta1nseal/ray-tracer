@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "primitiveobject.hpp"
+#include "environment.hpp"
 #include "raymath/raymath.hpp"
 #include "geometry/geometry.hpp"
 
@@ -34,4 +35,9 @@ const std::vector<PrimitiveObject<double>>& Scene::getPrimitiveObjects() const
 Vec3<double> Scene::getEnvironmentEmission(const Vec3<double>& direction) const
 {
     return environment.getEmission(direction);
+}
+
+Vec3<double> Scene::sampleSun(double yaw, double pitchValue) const
+{
+    return environment.sampleSun(yaw, pitchValue);
 }

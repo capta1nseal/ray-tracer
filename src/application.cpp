@@ -10,7 +10,7 @@
 #include "geometry/geometry.hpp"
 #include "material.hpp"
 #include "frame.hpp"
-#include "raymath/usefulfunctions.hpp"
+#include "raymath/raymath.hpp"
 
 
 RayTracerApplication::RayTracerApplication()
@@ -24,31 +24,45 @@ RayTracerApplication::RayTracerApplication()
 void RayTracerApplication::initializeScene()
 {
     Material groundMaterial = {
-        {0.3, 0.3, 0.3},
-        {0.9, 0.9, 0.9},
+        {0.67, 0.67, 0.67},
         {1.0, 1.0, 1.0},
-        0.15,
-        0.5,
+        5.0,
+        1.0,
         0.0
     };
 
     Material frameMaterial = {
         {0.5, 0.6, 0.3},
-        {0.85, 0.85, 0.85},
         {1.0, 1.0, 1.0},
-        0.3,
-        0.67,
+        10.0,
+        0.85,
         0.0
     };
 
     Material ballMaterial = {
-        {0.6, 0.3, 0.7},
-        {0.7, 0.4, 0.8},
+        {0.75, 0.5, 0.9},
         {1.0, 1.0, 1.0},
-        0.95,
-        0.9,
+        5.0,
+        0.05,
         0.0
     };
+
+    Material lightMaterial = {
+        {0.0, 0.0, 0.0},
+        {1.0, 1.0, 1.0},
+        2.0,
+        0.5,
+        10.0
+    };
+
+    // scene.addPrimitiveObject(PrimitiveObject<double>(
+    //     Plane(
+    //         Vec3(-5.0, -5.0, 10.0),
+    //         Vec3(10.0, 0.0, 0.0),
+    //         Vec3(0.0, 10.0, 0.0)
+    //     ),
+    //     lightMaterial
+    // ));
 
     scene.addPrimitiveObject(PrimitiveObject<double>(
         Plane(
@@ -101,11 +115,11 @@ void RayTracerApplication::initializeScene()
     // Test for rotation around axis.
 
     Vec3<double> sphereCenter = {0.0, 0.0, 5.0};
-    Vec3<double> firstBallDelta = {-5.0, 0.0, 0.0};
+    Vec3<double> firstBallDelta = {5.0, 0.5, 0.0};
     Vec3<double> axis = Vec3(-0.1, 0.2, 1.0).normalized();
     firstBallDelta = axis % (firstBallDelta % axis);
-
-    for (double angle = 0.0; angle < tau - 0.001; angle += tau * (1.0 / 15.0))
+    
+    for (double angle = 0.0; angle < tau - 0.001; angle += tau * (1.0 / 11.0))
     {
         scene.addPrimitiveObject(PrimitiveObject<double>(
             Sphere(
@@ -130,6 +144,7 @@ void RayTracerApplication::initializeCamera()
     // Amount to scale up aspect ratio by.
     // Width in characters is floor(terminalWidth * terminalScale).
     // Height in characters is floor(terminalHeight * (terminalScale / terminalCharHeight)).
+    // double terminalScale = 4.0;
     double terminalScale = 23.63;
 
     terminalWidth *= terminalScale;
@@ -146,7 +161,7 @@ void RayTracerApplication::initializeCamera()
 void RayTracerApplication::initializeRayTracer()
 {
     rayTracer.setCamera(camera);
-    rayTracer.setMaxSamples(16384);
+    rayTracer.setMaxSamples(16384 * 16384);
 }
 
 void RayTracerApplication::run()

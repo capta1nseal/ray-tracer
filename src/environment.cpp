@@ -3,7 +3,7 @@
 
 #include <cmath>
 
-#include "raymath/vec3.hpp"
+#include "raymath/raymath.hpp"
 
 
 Environment::Environment()
@@ -13,7 +13,7 @@ Environment::Environment()
 
     sunRadiusScale = 10.0;
     sunEmissionColor = {0.9922, 0.9843, 0.8275};
-    sunEmissionStrength = 1.0e4 / (sunRadiusScale * sunRadiusScale);
+    sunEmissionStrength = 2.0e4 / (sunRadiusScale * sunRadiusScale);
     sunDirection = Vec3(-12.5, 35.0, 20.0).normalized();
     sunRadius = (0.5 * M_PI / 180.0) * sunRadiusScale;
     cosSunRadius = std::cos(sunRadius);
@@ -29,4 +29,9 @@ Vec3<double> Environment::getEmission(const Vec3<double>& direction) const
 
     // If ray points towards sun, add sun's emission to incoming light.
     return (direction * sunDirection > cosSunRadius) ? emittedLight + sunEmissionColor * sunEmissionStrength : emittedLight;
+}
+
+Vec3<double> Environment::sampleSun(double yaw, double pitchValue) const
+{
+    return rotateAroundSelfUnit(sunDirection, yaw, pitchValue * sunRadius);
 }

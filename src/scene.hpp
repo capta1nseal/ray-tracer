@@ -35,6 +35,9 @@ public:
     // Get the incoming light from the environment from specified direction.
     Vec3<double> getEnvironmentEmission(const Vec3<double>& direction) const;
 
+    // Sample a random ray pointing towards a point on the sun.
+    Vec3<double> sampleSun(double yaw, double pitchValue) const;
+
 private:
     std::vector<PrimitiveObject<double>> primitiveObjects;
 

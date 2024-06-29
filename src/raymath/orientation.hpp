@@ -25,13 +25,13 @@ struct Orientation
     }
     template<Vec3Basis U> Orientation(const Orientation<U>& other)
         : roll(other.roll), pitch(other.pitch), yaw(other.yaw) {}
-    template<Vec3Basis U> Orientation(Vec3<U> direction)
+    template<Vec3Basis U> Orientation(Vec3<U> vector)
     {
         roll = 0.0;
 
-        pitch = std::asin(direction.z);
+        pitch = std::asin(vector.z);
 
-        yaw = -std::acos(direction.x / std::cos(pitch));
+        yaw = (vector.z >= (1.0 - 1e-9)) ? 0.0 : std::atan2(-vector.y, vector.x);
     }
 
     // returns normalized vector pointing forwards

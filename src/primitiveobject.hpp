@@ -2,7 +2,7 @@
 #define _RAYTRACERPRIMITIVEOBJECT_
 
 
-#include "raymath/vec3.hpp"
+#include "raymath/raymath.hpp"
 #include "geometry/primitives/primitives.hpp"
 
 

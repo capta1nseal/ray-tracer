@@ -2,6 +2,7 @@
 
 
 #include <random>
+#include <iostream>
 
 #include "frame.hpp"
 #include "scene.hpp"
@@ -54,6 +55,54 @@ void RayTracer::sampleFrame()
             cameraRay = camera.getRayToSubPixel(x + unitDistribution(randomEngine), y + unitDistribution(randomEngine));
 
             frame.addSample(x, y, traceRay(cameraRay, maxBounces));
+
+
+
+            // TODO remove all this
+            HitInfo<double> nearestHitInfo = {};
+            for (const auto& primitiveObject : scene.getPrimitiveObjects())
+            {
+                HitInfo hitInfo = std::visit(primitiveIntersector.with(&cameraRay), primitiveObject.getPrimitive());
+
+                if (hitInfo.didHit)
+                {
+                    if (nearestHitInfo.didHit == false or hitInfo.distance < nearestHitInfo.distance)
+                    {
+                        nearestHitInfo = hitInfo;
+                        nearestHitInfo.material = primitiveObject.getMaterial();
+                    }
+                }
+            }
+            if (nearestHitInfo.didHit)
+            {
+                long double accumulatedPDF = 0.0l;
+                unsigned long int PDFCount = 0ul;
+                for (unsigned int i = 0; i < 1000000; i++)
+                {
+                    Vec3<double> outgoing = -cameraRay.direction;
+                    Vec3<double> macroNormal = nearestHitInfo.normal;
+                    double microNormalYaw = angleDistribution(randomEngine);
+                    double microNormalPitch = nearestHitInfo.material.sampleNormal(unitDistribution(randomEngine));
+                    Vec3<double> microNormal = rotateAroundSelfUnit(macroNormal, microNormalYaw, microNormalPitch);
+                    Vec3<double> incoming = reflectOut(outgoing, microNormal);
+
+                    unsigned int sampleAttempts = 1;
+                    while (incoming * macroNormal < 0.0)
+                    {
+                        microNormalYaw = angleDistribution(randomEngine);
+                        microNormalPitch = nearestHitInfo.material.sampleNormal(unitDistribution(randomEngine));
+                        microNormal = rotateAroundSelfUnit(macroNormal, microNormalYaw, microNormalPitch);
+                        incoming = reflectOut(outgoing, microNormal);
+                        sampleAttempts += 1;
+                    }
+
+                    long double currentValue = (macroNormal * microNormal) * nearestHitInfo.material.PDFNormal(microNormalPitch);
+                    accumulatedPDF += currentValue;
+                    PDFCount += 1;
+                }
+                std::cout << "The average PDF*cos(theta) (1000000 samples) for this intersection was " << accumulatedPDF / PDFCount << ".\n";
+                std::cout << "Each sample should be multiplied by " << (1.0l / (accumulatedPDF / PDFCount)) << " on average.\n";
+            }
         }
     }
 }
@@ -82,17 +131,52 @@ Vec3<double> RayTracer::traceRay(Ray<double> ray, unsigned int depthLeft)
 
         if (depthLeft == 0u) return emittedLight;
 
-        bool isSpecularBounce = nearestHitInfo.material.specularProbability >= unitDistribution(randomEngine);
+        Vec3<double> outgoing = -ray.direction;
+        Vec3<double> macroNormal = nearestHitInfo.normal;
+        double microNormalYaw = angleDistribution(randomEngine);
+        double microNormalPitch = nearestHitInfo.material.sampleNormal(unitDistribution(randomEngine));
+        Vec3<double> microNormal = rotateAroundSelfUnit(macroNormal, microNormalYaw, microNormalPitch);
+        Vec3<double> incoming = reflectOut(outgoing, microNormal);
+        while (incoming * macroNormal < 0.0)
+        {
+            microNormalYaw = angleDistribution(randomEngine);
+            microNormalPitch = nearestHitInfo.material.sampleNormal(unitDistribution(randomEngine));
+            microNormal = rotateAroundSelfUnit(macroNormal, microNormalYaw, microNormalPitch);
+            incoming = reflectOut(outgoing, microNormal);
+        }
+
+        // Vec3<double> outgoing = -ray.direction;
+        // Vec3<double> macroNormal = nearestHitInfo.normal;
+        // Vec3<double> incoming = getRandomBiasedDirectionHemisphere(macroNormal);        
+        // Vec3<double> microNormal = lerp(outgoing, incoming, 0.5).normalized();
+        // double microNormalPitch = std::acos(outgoing * microNormal);
+
+        double outDotMacroNormal = outgoing * macroNormal;
+        double outDotMicroNormal = outgoing * microNormal;
+
+        double BRDF =
+            (nearestHitInfo.material.fresnel(outgoing * microNormal)) *
+            (nearestHitInfo.material.geometricAttenuation(incoming, outgoing, macroNormal, microNormal)) *
+            (nearestHitInfo.material.NDF(microNormalPitch)) /
+            (4.0 * (incoming * macroNormal) * outDotMacroNormal);
+
+        double PDF = nearestHitInfo.material.PDFNormal(microNormalPitch);
+        // double PDF = (incoming * macroNormal) * oneOverPi;
+
+        // TODO REMOVE
+        // double valueOfInterest = 4.0 * (incoming * macroNormal) * outDotMacroNormal;
+        // return Vec3(valueOfInterest, valueOfInterest, valueOfInterest);
+        // return incoming * 0.5 + 0.5;
 
         return emittedLight + multiplyElements(
             traceRay(
                 Ray(
                     nearestHitInfo.hitPoint,
-                    bounceDirection(ray.direction, nearestHitInfo.normal, isSpecularBounce, nearestHitInfo.material.smoothness)
+                    incoming
                 ),
                 depthLeft - 1
             ),
-            isSpecularBounce ? nearestHitInfo.material.specularColor : nearestHitInfo.material.color
+            nearestHitInfo.material.color * (BRDF * (incoming * macroNormal) / PDF)
         );
     }
     else
