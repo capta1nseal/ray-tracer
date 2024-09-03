@@ -2,8 +2,11 @@
 #define _RAYTRACERAPPLICATION_
 
 
-#include "camera.hpp"
+#include <memory>
+
+#include "randomgenerator.hpp"
 #include "scene.hpp"
+#include "camera.hpp"
 #include "raytracer.hpp"
 
 
@@ -18,6 +21,7 @@ public:
     void run();
 
 private:
+    std::shared_ptr<RandomGenerator> randomGenerator;
     Scene scene;
     Camera camera;
     RayTracer rayTracer;

@@ -4,9 +4,11 @@
 
 #include <cmath>
 #include <random>
+#include <memory>
 
 #include "raymath/raymath.hpp"
 #include "geometry/primitives/plane.hpp"
+#include "randomgenerator.hpp"
 
 
 /*
@@ -20,7 +22,8 @@ public:
     Camera(
         const Vec3<double>& initPosition = {}, const Orientation<double>& initOrientation = {},
         unsigned int initWidth = 16, unsigned int initHeight = 9,
-        double initHorizontalFOV = {49.0*M_PI/180.0}, double relativePixelHeight = 1.0
+        double initHorizontalFOV = {49.0*M_PI/180.0}, double relativePixelHeight = 1.0,
+        const std::shared_ptr<RandomGenerator> &prandomGenerator = {}
     )
     {
         if (initWidth == 0) initWidth = 1;
@@ -44,15 +47,8 @@ public:
         targetPlane = getTargetPlane();
         targetPlaneSet = true;
 
-        std::random_device randomDevice;
-        randomEngine.seed(randomDevice());
-        subPixelDistribution = std::uniform_real_distribution<double>(0.0, 1.0);
+        randomGenerator = prandomGenerator;
     }
-    template<Vec3Basis U> Camera(const Camera& other)
-        : position(other.position), orientation(other.orientation),
-        width(other.width), height(other.height),
-        aspectRatio(other.aspectRatio), horizontalFOV(other.horizontalFOV), verticalFOV(other.verticalFOV)
-        {}
 
     const Vec3<double>& getPosition() const { return position; }
     const Orientation<double>& getOrientation() const { return orientation; }
@@ -92,11 +88,11 @@ public:
     }
     // Get a ray from camera position pointing towards a raydom sub-pixel position within the given pixel.
     // The pixel is defined according to the constructed target plane, width and height.
-    Ray getRandomRayToPixel(unsigned int x, unsigned int y)
+    Ray getRandomRayToPixel(unsigned int x, unsigned int y) const
     {
         return getRayToSubPixel(
-            double(x) + subPixelDistribution(randomEngine),
-            double(y) + subPixelDistribution(randomEngine)
+            double(x) + randomGenerator->randomLinearUnit(),
+            double(y) + randomGenerator->randomLinearUnit()
         );
     }
     // Get a ray from camera position pointing towards a sub-pixel position:
@@ -127,8 +123,7 @@ private:
     bool targetPlaneSet;
     Plane targetPlane;
 
-    std::mt19937 randomEngine;
-    std::uniform_real_distribution<double> subPixelDistribution;
+    std::shared_ptr<RandomGenerator> randomGenerator;
 };
 
 

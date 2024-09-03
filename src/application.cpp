@@ -3,7 +3,6 @@
 
 #include <chrono>
 #include <iostream>
-#include <random>
 
 #include "camera.hpp"
 #include "scene.hpp"
@@ -16,6 +15,7 @@
 RayTracerApplication::RayTracerApplication()
     : rayTracer(scene, camera)
 {
+    randomGenerator = std::make_shared<RandomGenerator>(RandomGenerator());
     initializeScene();
     initializeCamera();
     initializeRayTracer();
@@ -138,7 +138,8 @@ void RayTracerApplication::initializeCamera()
         Vec3(-17.0, 7.0, 10.0),
         Orientation( M_PI * 0.0, M_PI * -0.11, M_PI * 0.125),
         terminalWidth, terminalHeight,
-        45.0 * M_PI / 180.0, terminalCharHeight
+        45.0 * M_PI / 180.0, terminalCharHeight,
+        randomGenerator
     );
 }
 
