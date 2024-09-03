@@ -9,9 +9,9 @@
 
 
 /*
-Rather trivial 3D orientation implementation.
-Range of angles is -pi to pi
-Ensures values are normal fp values.
+3D orientation implementation.
+Range of angles is [-pi,pi]
+Call sanitize() in case edge-case floating point values must be avoided.
 */
 template<Vec3Basis T>
 struct Orientation
@@ -25,18 +25,26 @@ struct Orientation
     }
     template<Vec3Basis U> Orientation(const Orientation<U>& other)
         : roll(other.roll), pitch(other.pitch), yaw(other.yaw) {}
+    template<Vec3Basis U> Orientation(Vec3<U> direction)
+    {
+        roll = 0.0;
+
+        pitch = std::asin(direction.z);
+
+        yaw = -std::acos(direction.x / std::cos(pitch));
+    }
 
     // returns normalized vector pointing forwards
     Vec3<T> forward() const
     {
         Vec3<T> forwardVec;
 
-        forwardVec.z = std::sin(-pitch);
+        forwardVec.z = std::sin(pitch);
 
         // x here temporarily stands for length of the direction vector projected onto the XY plane.
         forwardVec.x = std::cos(pitch);
 
-        forwardVec.y = std::sin(yaw) * forwardVec.x;
+        forwardVec.y = -std::sin(yaw) * forwardVec.x;
 
         forwardVec.x = std::cos(yaw) * forwardVec.x;
 
@@ -47,14 +55,14 @@ struct Orientation
     Vec3<T> up() const
     {
         T cosRoll = std::cos(roll);
-        T cosRollSinPitch = cosRoll * std::sin(pitch);
+        T minusCosRollSinPitch = -cosRoll * std::sin(pitch);
         T sinRoll = std::sin(roll);
         T sinYaw = std::sin(yaw);
         T cosYaw = std::cos(yaw);
 
         return Vec3(
-            cosRollSinPitch * cosYaw + sinRoll * sinYaw,
-            cosRollSinPitch * sinYaw - sinRoll * cosYaw,
+            minusCosRollSinPitch * cosYaw + sinRoll * sinYaw,
+            minusCosRollSinPitch * -sinYaw + sinRoll * cosYaw,
             std::cos(pitch) * cosRoll
         );
     }
@@ -65,7 +73,7 @@ struct Orientation
     template<Vec3Basis U> auto operator-(const Orientation<U>& other) const
     { return Orientation<std::common_type_t<T, U>>(roll - other.roll, pitch - other.pitch, yaw - other.yaw); }
 
-    // enforces angle range
+    // Enforce angle ranges correctly wrapped into [-pi,pi]
     void conformAngles()
     {
         roll = std::fmod(roll, tau);
@@ -78,7 +86,8 @@ struct Orientation
         yaw = (yaw <-pi) ? yaw + tau : yaw;
         yaw = (yaw > pi) ? yaw - tau : yaw;
     }
-    // ensures all values disambiguously represent numbers
+    // Ensure all values represent actual numbers.
+    // Any value not representing an actual number will be set to zero.
     void sanitize()
     {
         if (!std::isnormal(roll)) roll = T(0.0);
@@ -87,6 +96,7 @@ struct Orientation
     }
 };
 
+// Output orientation to os formatted as (roll,pitch,yaw).
 template<Vec3Basis T> std::ostream& operator<<(std::ostream& os, const Orientation<T>& orientation)
 {
     os << "(" << orientation.roll << "," << orientation.pitch << "," << orientation.yaw << ")";

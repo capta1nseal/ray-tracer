@@ -4,153 +4,183 @@
 #include <chrono>
 #include <iostream>
 #include <random>
-#include <string>
-#include <sstream>
 
 #include "camera.hpp"
-#include "world.hpp"
+#include "scene.hpp"
 #include "geometry/geometry.hpp"
 #include "material.hpp"
 #include "frame.hpp"
+#include "raymath/usefulfunctions.hpp"
 
 
-RayTracerApplication::RayTracerApplication() {}
+RayTracerApplication::RayTracerApplication()
+    : rayTracer(scene, camera)
+{
+    initializeScene();
+    initializeCamera();
+    initializeRayTracer();
+}
+
+void RayTracerApplication::initializeScene()
+{
+    // TODO move all this code into a scene initializing component. May be a good time to move defined 3D objects into file-based storage.
+    Material groundMaterial = {
+        {0.3, 0.3, 0.3},
+        {0.9, 0.9, 0.9},
+        {1.0, 1.0, 1.0},
+        0.15,
+        0.5,
+        0.0
+    };
+
+    Material frameMaterial = {
+        {0.5, 0.6, 0.3},
+        {0.85, 0.85, 0.85},
+        {1.0, 1.0, 1.0},
+        0.3,
+        0.67,
+        0.0
+    };
+
+    Material ballMaterial = {
+        {0.6, 0.3, 0.7},
+        {0.7, 0.4, 0.8},
+        {1.0, 1.0, 1.0},
+        0.95,
+        0.9,
+        0.0
+    };
+
+    scene.addPrimitiveObject(PrimitiveObject(
+        Plane(
+            Vec3(-100.0, 0.0, 0.0),
+            Vec3(100.0,-100.0, 0.0),
+            Vec3(100.0, 100.0, 0.0)
+        ),
+        groundMaterial
+    ));
+    scene.addPrimitiveObject(PrimitiveObject(
+        Plane(
+            Vec3(-2.0, 0.0, 0.0),
+            Vec3( 2.0, 0.0, 4.0),
+            Vec3( 2.0, 0.0, 1.0)
+        ),
+        frameMaterial
+    ));
+    scene.addPrimitiveObject(PrimitiveObject(
+        Plane(
+            Vec3( 2.0, 0.0, 0.0),
+            Vec3(-2.0, 0.0, 4.0),
+            Vec3(-2.0, 0.0, 1.0)
+        ),
+        frameMaterial
+    ));
+    scene.addPrimitiveObject(PrimitiveObject(
+        Plane(
+            Vec3( 0.0,-2.0, 0.0),
+            Vec3( 0.0, 2.0, 4.0),
+            Vec3( 0.0, 2.0, 1.0)
+        ),
+        frameMaterial
+    ));
+    scene.addPrimitiveObject(PrimitiveObject(
+        Plane(
+            Vec3( 0.0, 2.0, 0.0),
+            Vec3( 0.0,-2.0, 4.0),
+            Vec3( 0.0,-2.0, 1.0)
+        ),
+        frameMaterial
+    ));
+    scene.addPrimitiveObject(PrimitiveObject(
+        Sphere(
+            Vec3(0.0, 0.0, 5.0),
+            2.0
+        ),
+        ballMaterial
+    ));
+
+    // Test for rotation around axis.
+
+    Vec3<double> sphereCenter = {0.0, 0.0, 5.0};
+    Vec3<double> firstBallDelta = {-5.0, 0.0, 0.0};
+    Vec3<double> axis = Vec3(-0.1, 0.2, 1.0).normalized();
+    firstBallDelta = axis % (firstBallDelta % axis);
+
+    for (double angle = 0.0; angle < tau - 0.001; angle += tau * (1.0 / 15.0))
+    {
+        scene.addPrimitiveObject(PrimitiveObject(
+            Sphere(
+                sphereCenter + rotateAroundUnit(firstBallDelta, axis, angle),
+                0.75
+            ),
+            ballMaterial
+        ));
+    }
+}
+
+void RayTracerApplication::initializeCamera()
+{
+    // Define terminal aspect ratio, then scale to full resolution taking character height into account.
+
+    unsigned int terminalWidth = 16;
+    unsigned int terminalHeight = 9;
+
+    // Relative character height hard-coded. Please use a monospace font.
+    double terminalCharHeight = 1.8;
+
+    // Amount to scale up aspect ratio by for final scale (in units of horizontal character width).
+    double terminalScale = 23.63;
+
+    terminalWidth *= terminalScale;
+    terminalHeight *= terminalScale / terminalCharHeight;
+
+    camera = Camera(
+        Vec3(-17.0, 7.0, 10.0),
+        Orientation( M_PI * 0.0, M_PI * -0.11, M_PI * 0.125),
+        terminalWidth, terminalHeight,
+        45.0 * M_PI / 180.0, terminalCharHeight
+    );
+}
+
+void RayTracerApplication::initializeRayTracer()
+{
+    rayTracer.setCamera(camera);
+    rayTracer.setMaxSamples(16384);
+}
 
 void RayTracerApplication::run()
 {
     auto clock = std::chrono::steady_clock();
     auto start = clock.now();
-    unsigned int sampleCount = 0;
-
-    double terminalFontAspectRatio = 1.8;
-
-    unsigned int terminalWidth = (16 * 13) * terminalFontAspectRatio;
-    unsigned int terminalHeight = 9 * 13;
-
-    Frame frame = Frame(terminalWidth, terminalHeight);
-
-    Camera camera = Camera(
-        Vec3(-17.0, 7.0, 10.0),
-        Orientation( M_PI * 0.0, M_PI * 0.11, M_PI * -0.125),
-        terminalWidth, terminalHeight,
-        41.0 * M_PI / 180.0, terminalFontAspectRatio
-    );
-
-    PrimitiveIntersector<double> intersector;
-
-    unsigned int maxSamples = 4096 * 4;
 
     unsigned int frameFrequency = 128;
 
-    Vec3<double> skyEmissionColor = {0.5, 0.5, 1.0};
-    double skyEmissionStrength = 1.0;
-    Vec3<double> sunEmissionColor = {0.9922, 0.9843, 0.8275};
-    double sunEmissionStrength = 1.0e4;
-    // Normalized direction vector pointing towards sun.
-    Vec3<double> sunDirection = Vec3(-12.5, 35.0, 20.0).normalized();
-    // Sun radius is its angular radius in rad.
-    double sunRadius = 0.5 * M_PI / 180.0;
-    double cosSunRadius = std::cos(sunRadius);
-
-
-    unsigned int maxBounces = 12;
-
-    std::default_random_engine randomEngine{std::random_device{}()};
-    std::uniform_real_distribution<double> unitDistribution(0.0, 1.0);
-    std::uniform_real_distribution<double> trigDistribution(-1.0, 1.0);
-    std::uniform_real_distribution<double> angleDistribution(-pi, pi);
+    const unsigned int& sampleCount = rayTracer.getSampleCount();
+    const unsigned int& maxSamples = rayTracer.getMaxSamples();
 
     start = clock.now();
 
     bool running = true;
     while (running)
     {
-        sampleCount++;
+        rayTracer.sampleFrame();
 
-
-        for (int y = terminalHeight; y > -1; y--)
-        {
-            for (unsigned int x = 0; x < terminalWidth; x++)
-            {
-                Ray<double> cameraRay = camera.getRandomRayToPixel(x, y);
-                Ray<double> finalRay = cameraRay;
-                bool anyIntersection = false;
-                HitInfo<double> hitInfo;
-                HitInfo<double> nearestHitInfo;
-
-                Vec3<double> rayColor = {1.0, 1.0, 1.0};
-                Vec3<double> incomingLight = {0.0, 0.0, 0.0};
-
-                for (unsigned int currentBounce = 0; currentBounce <= maxBounces; currentBounce++)
-                {
-                    anyIntersection = false;
-                    nearestHitInfo = HitInfo<double>();
-                    for (const auto& primitiveObject : world.getPrimitiveObjects())
-                    {
-                        hitInfo = std::visit(intersector.with(&finalRay), primitiveObject.getPrimitive());
-
-                        if (hitInfo.didHit)
-                        {
-                            hitInfo.material = primitiveObject.getMaterial();
-                            anyIntersection = true;
-                            if (nearestHitInfo.didHit == false or hitInfo.distance < nearestHitInfo.distance)
-                            {
-                                nearestHitInfo = hitInfo;
-                            }
-                        }
-                    }
-
-                    // The following applies the current material model to the ray colour and incoming light.
-                    if (anyIntersection)
-                    {
-                        bool isSpecularBounce = nearestHitInfo.material.specularProbability >= unitDistribution(randomEngine);
-                        // Randomly generated direction of diffuse bounce.
-                        // This generates a normalized vector in a uniform spherical distribution 
-                        // then converts it to a hemispherical biased distribution 
-                        // in a relatively cheap manner.
-                        // The bias perfectly accounts for lower angles compared to the surface normal contributing less light.
-                        Vec3 diffuseDir = (nearestHitInfo.normal + Orientation(
-                            0.0,
-                            std::asin(trigDistribution(randomEngine)),
-                            angleDistribution(randomEngine)
-                        ).forward()).normalized();
-                        // Perfect specular reflection is easy.
-                        Vec3 specularDir = finalRay.direction.reflected(nearestHitInfo.normal);
-                        // Emission is considered to be equal in all directions.
-                        Vec3 emittedLight = nearestHitInfo.material.emissionColor * nearestHitInfo.material.emissionStrength;
-                        incomingLight += multiplyElements(emittedLight, rayColor);
-                        rayColor *= lerp(nearestHitInfo.material.color, nearestHitInfo.material.specularColor, isSpecularBounce);
-                        finalRay.direction = lerp(diffuseDir, specularDir, nearestHitInfo.material.smoothness * isSpecularBounce).normalized();
-                        finalRay.origin = nearestHitInfo.hitPoint;
-                    }
-                    else
-                    {
-                        Vec3<double> emittedLight;
-                        if (finalRay.direction * sunDirection > cosSunRadius)
-                        {
-                            emittedLight = sunEmissionColor * sunEmissionStrength;
-                        }
-                        else
-                        {
-                            emittedLight = skyEmissionColor * skyEmissionStrength * std::clamp(finalRay.direction.z, 0.0, 1.0);
-                        }
-                        incomingLight += multiplyElements(emittedLight, rayColor); 
-                        break;
-                    }
-                }
-
-                Vec3<double> newFrameColor = incomingLight;
-                if (finalRay.origin == cameraRay.origin and finalRay.direction == cameraRay.direction) newFrameColor = Vec3<double>(0.0, 0.0, 0.0);
-                frame.add(x, y, newFrameColor);
-            }
-        }
-
-        if ((sampleCount - 1) % frameFrequency == 0 or sampleCount == maxSamples) std::cout << frame;
+        // Draw frame at power of two sample counts for rapid initial noise reduction,
+        // then at intervals of frameFrequency once it is first reached.
+        if (
+            (sampleCount < frameFrequency and isZeroOrPowerOfTwo(sampleCount)) or
+            (sampleCount) % frameFrequency == 0
+        )
+            std::cout << rayTracer.getFrame();
         
         if (sampleCount >= maxSamples) running = false;
     }
 
-    auto frameDuration = (clock.now() - start).count() / static_cast<double>(sampleCount);
+    // Ensure that the final image gets displayed,
+    // mostly for cases where maxSamples % frameFrequency != 0.
+    std::cout << rayTracer.getFrame();
 
-    std::cout << "Average frame duration was: " << frameDuration / 1e6 << " ms\n";
+    auto meanSampleDuration = (clock.now() - start).count() / static_cast<double>(rayTracer.getSampleCount());
+
+    std::cout << "Average sample duration was: " << meanSampleDuration / 1e6 << " ms\n";
 }

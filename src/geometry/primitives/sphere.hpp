@@ -2,63 +2,61 @@
 #define _RAYTRACERSPHERE_
 
 
+#include "primitive.hpp"
+
 #include <cmath>
+#include <memory>
 
 #include "../../raymath/raymath.hpp"
 
 
 /*
-Geometric sphere in 3D space.
+3D sphere implementation.
 Implements ray intersection.
-Values passed in must be normal floating point values.
 */
-template<Vec3Basis T>
-struct Sphere
+struct Sphere : public Primitive
 {
     // Center point of sphere in global coordinates.
-    Vec3<T> center;
+    Vec3<double> center;
 
-    T radius;
+    double radius;
 
-    Sphere(const Vec3<T>& initCenter = {}, T initRadius = T(1.0))
+    Sphere(const Vec3<double>& initCenter = {}, double initRadius = 1.0)
         : center(initCenter), radius(initRadius) {}
-    template<Vec3Basis U> Sphere(const Sphere<U>& other)
-        : center(other.center), radius(other.radius) {}
-
-    template<Vec3Basis U> auto intersectRay(const Ray<U>& ray) const
+    
+    std::unique_ptr<Primitive> clone() const override
     {
-        using ResultType = std::common_type_t<T, U>;
-        
-        HitInfo<ResultType> hitInfo;
+        return std::make_unique<Sphere>(*this);
+    }
 
-        Vec3<ResultType> toCenter = center - ray.origin;
+    HitInfo intersectRay(const Ray& ray) const override
+    {
+        HitInfo hitInfo;
 
-        ResultType midDistance = toCenter * ray.direction;
+        Vec3<double> toCenter = center - ray.origin;
+        double midDistance = toCenter * ray.direction;
 
-        // squared to compare lengths without expensive sqrt
-        ResultType midDifferenceSquared = toCenter * toCenter - midDistance * midDistance;
+        // Squared to compare lengths without expensive sqrt.
+        double midDifferenceSquared = toCenter * toCenter - midDistance * midDistance;
+        double radiusSquared = radius * radius;
 
-        // squared to compare lengths without expensive sqrt
-        ResultType radiusSquared = radius * radius;
-
-        // Attempt to optimize by returning early if ray doesn't intersect 2D outline.
+        // Return early if ray doesn't intersect forwards or backwards.
         if (midDifferenceSquared > radiusSquared) return hitInfo;
 
-        ResultType halfDepth = std::sqrt(radiusSquared - midDifferenceSquared);
+        double halfDepth = std::sqrt(radiusSquared - midDifferenceSquared);
 
-        // Select exit point first to check if ray origin is too far forward.
-        hitInfo.distance = midDistance + halfDepth;
+        // Select entry point if it's in front of the ray origin, otherwise exit point.
+        // Tolerance of a picometer to avoid light leaking.
+        hitInfo.distance = (midDistance > halfDepth + 1.0e-12) ? midDistance - halfDepth : midDistance + halfDepth;
 
-        if (hitInfo.distance <= ResultType(0.0)) return hitInfo;
-
-        // Select entry point if ray origin is behind it.
-        hitInfo.distance = (hitInfo.distance > halfDepth + halfDepth) ? hitInfo.distance - (halfDepth + halfDepth) : hitInfo.distance;
+        // Treat as non-intersection if ray origin is too close to surface.
+        if (hitInfo.distance <= 1.0e-12) return hitInfo;
 
         hitInfo.didHit = true;
-
         hitInfo.hitPoint = ray.origin + hitInfo.distance * ray.direction;
-        
-        hitInfo.normal = (hitInfo.hitPoint - center).normalized();
+
+        // Normal facing in if ray origin inside sphere, otherwise out.
+        hitInfo.normal = (midDistance > halfDepth) ? (hitInfo.hitPoint - center) * (1.0 / radius) : (center - hitInfo.hitPoint) * (1.0 / radius);
 
         return hitInfo;
     }

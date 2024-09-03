@@ -1,0 +1,61 @@
+
+/*
+TODO reimplement importance sampling.
+This file contains all code from the previous importance sampling implementation
+Which had to be removed, since it only generated diffuse samples.
+This led to diffuse lighting being brighter than specular lighting anywhere with an unoccluded line of sight to the sun.
+This implementation also doesn't take into account any light sources other than to sun.
+To be honest, this needs reimplementing along with an implementation of light sources.
+It would also be cool to recognise emissive materials as light sources, as well as some heirarchy of importance of a light source,
+depending where the light source is being sampled from, as well as the size and brightness of said light source.
+
+
+    double sunSampleProbability = 1.0;
+
+
+
+
+                unsigned int sunSampleCount = 0;
+                Vec3<double> sunSampleLight = {0.0, 0.0, 0.0};
+
+
+
+                        if (sunSampleProbability >= unitDistribution(randomEngine))
+                        {
+                            Vec3<double> sunSampleDirection = sunDirection;
+                            double yaw = angleDistribution(randomEngine);
+                            double pitch = M_PI / 2.0 - sunRadius * std::sqrt(unitDistribution(randomEngine));
+                            Vec3<double> uniformSphericalForwardVector;
+                            uniformSphericalForwardVector.x = std::sin(pitch);
+                            uniformSphericalForwardVector.z = std::cos(pitch);
+                            uniformSphericalForwardVector.y = std::sin(yaw) * uniformSphericalForwardVector.z;
+                            uniformSphericalForwardVector.z = std::cos(yaw) * uniformSphericalForwardVector.z;
+                            Orientation<double> uniformSphericalForwardOrientation = uniformSphericalForwardVector;
+                            sunSampleDirection = (Orientation<double>(sunSampleDirection) + uniformSphericalForwardOrientation).forward();
+                            Ray<double> sunRay = Ray(nearestHitInfo.hitPoint, sunSampleDirection);
+                            HitInfo<double> sunTraceHitInfo;
+                            // The area of a full sphere in steradians is 4pi.
+                            // The area of a circle projected from the center of that sphere is pi*theta*theta
+                            // So the probability of being within the circle when sampling uniformly is the area of the circle over the full area.
+                            double sunSampleChanceWithin = sunRadius * sunRadius * 0.5;
+
+                            for (const auto& PrimitiveObject : scene.getPrimitiveObjects())
+                            {
+                                sunTraceHitInfo = std::visit(intersector.with(&sunRay), PrimitiveObject.getPrimitive());
+
+                                if (sunTraceHitInfo.didHit) break;
+                            }
+
+                            if (!sunTraceHitInfo.didHit)
+                            {
+                                sunSampleCount += 1;
+                                sunSampleLight += multiplyElements(multiplyElements(sunEmissionColor * sunEmissionStrength, rayColor), nearestHitInfo.material.color * (1.0 - nearestHitInfo.material.specularProbability)) * 
+                                    std::max(sunSampleDirection * nearestHitInfo.normal, 0.0) *
+                                    sunSampleChanceWithin * M_PI *
+                                    (1.0 - nearestHitInfo.material.specularProbability);
+                            }
+                        }
+
+
+
+*/

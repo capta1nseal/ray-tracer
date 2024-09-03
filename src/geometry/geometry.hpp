@@ -3,12 +3,11 @@
 
 
 /*
-wrapper for all implemented geometry types
+Wrapper header for all implemented geometric types and operations.
 */
 
 
 #include "primitives/primitives.hpp"
-#include "primitiveintersector.hpp"
 
 
 #endif
