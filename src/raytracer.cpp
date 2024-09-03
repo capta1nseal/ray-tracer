@@ -2,6 +2,7 @@
 
 
 #include <random>
+#include <memory>
 
 #include "frame.hpp"
 #include "scene.hpp"
@@ -10,12 +11,11 @@
 #include "material.hpp"
 
 
-RayTracer::RayTracer(Scene& initScene, Camera& initCamera)
+RayTracer::RayTracer(Scene& initScene, Camera& initCamera, const std::shared_ptr<RandomGenerator>& prandomGenerator)
     : camera(initCamera),
     frame(initCamera.getWidth(), initCamera.getHeight()),
     scene(initScene),
-    randomEngine(std::random_device{}()),
-    unitDistribution(0.0, 1.0), trigDistribution(-1.0, 1.0), angleDistribution(-pi, pi)
+    randomGenerator(prandomGenerator)
 {
     sampleCount = 0;
     maxSamples = 4096;
@@ -50,14 +50,14 @@ void RayTracer::sampleFrame()
     {
         for (unsigned int y = 0; y < height; y++)
         {
-            cameraRay = camera.getRayToSubPixel(x + unitDistribution(randomEngine), y + unitDistribution(randomEngine));
+            cameraRay = camera.getRayToSubPixel(x + randomGenerator->randomLinearUnit(), y + randomGenerator->randomLinearUnit());
 
             frame.addSample(x, y, traceRay(cameraRay, maxBounces));
         }
     }
 }
 
-Vec3<double> RayTracer::traceRay(Ray ray, unsigned int depthLeft)
+Vec3<double> RayTracer::traceRay(Ray ray, unsigned int depthLeft) const
 {
     HitInfo hitInfo, nearestHitInfo = {};
 
@@ -81,7 +81,7 @@ Vec3<double> RayTracer::traceRay(Ray ray, unsigned int depthLeft)
 
         if (depthLeft == 0u) return emittedLight;
 
-        bool isSpecularBounce = nearestHitInfo.material.specularProbability >= unitDistribution(randomEngine);
+        bool isSpecularBounce = nearestHitInfo.material.specularProbability >= randomGenerator->randomLinearUnit();
 
         return emittedLight + multiplyElements(
             traceRay(
@@ -100,7 +100,7 @@ Vec3<double> RayTracer::traceRay(Ray ray, unsigned int depthLeft)
     }
 }
 
-Vec3<double> RayTracer::bounceDirection(const Vec3<double>& incomingRay, const Vec3<double>& normal, bool isSpecularBounce, double materialSmoothness)
+Vec3<double> RayTracer::bounceDirection(const Vec3<double>& incomingRay, const Vec3<double>& normal, bool isSpecularBounce, double materialSmoothness) const
 {
     Vec3<double> diffuseDirection = getRandomBiasedDirectionHemisphere(normal);
     // If the reflection is determined to not be specular, just return diffuse direction.
@@ -124,20 +124,20 @@ const Frame& RayTracer::getFrame() const
     return frame;
 }
 
-Vec3<double> RayTracer::getRandomUniformDirectionSphere()
+Vec3<double> RayTracer::getRandomUniformDirectionSphere() const
 {
     return Orientation<double>(
         0.0,
-        std::asin(trigDistribution(randomEngine)),
-        angleDistribution(randomEngine)
+        std::asin(randomGenerator->randomLinearTrig()),
+        randomGenerator->randomLinearAngle()
     ).forward();
 }
-Vec3<double> RayTracer::getRandomUniformDirectionHemisphere(const Vec3<double>& normal)
+Vec3<double> RayTracer::getRandomUniformDirectionHemisphere(const Vec3<double>& normal) const
 {
     Vec3<double> direction = getRandomUniformDirectionSphere();
     return (normal * direction < 0.0) ? -direction : direction;
 }
-Vec3<double> RayTracer::getRandomBiasedDirectionHemisphere(const Vec3<double>& normal)
+Vec3<double> RayTracer::getRandomBiasedDirectionHemisphere(const Vec3<double>& normal) const
 {
     return (getRandomUniformDirectionSphere() + normal).normalized();
 }

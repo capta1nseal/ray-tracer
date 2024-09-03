@@ -3,6 +3,7 @@
 
 
 #include <random>
+#include <memory>
 
 #include "frame.hpp"
 #include "scene.hpp"
@@ -17,7 +18,7 @@ Wrapper class for ray bouncing, sample generation and ray-traced rendering.
 class RayTracer
 {
 public:
-    RayTracer(Scene& initScene, Camera& initCamera);
+    RayTracer(Scene& initScene, Camera& initCamera, const std::shared_ptr<RandomGenerator>& prandomGenerator);
 
     // Run whenever anything about camera changed, or the camera changes completely.
     void setCamera(Camera& newCamera);
@@ -32,21 +33,21 @@ public:
 
     // Sample incoming light from given ray's direction to its origin.
     // Will terminate path if depthLeft reaches 0.
-    Vec3<double> traceRay(Ray ray, unsigned int depthLeft);
+    Vec3<double> traceRay(Ray ray, unsigned int depthLeft) const;
 
     // Generate outgoing ray direction based on incoming ray, surface normal and material properties.
-    Vec3<double> bounceDirection(const Vec3<double>& incomingRay, const Vec3<double>& normal, bool isSpecularBounce, double materialSmoothness);
+    Vec3<double> bounceDirection(const Vec3<double>& incomingRay, const Vec3<double>& normal, bool isSpecularBounce, double materialSmoothness) const;
 
     const unsigned int& getSampleCount() const;
     const unsigned int& getMaxSamples() const;
 
     const Frame& getFrame() const;
 
-    Vec3<double> getRandomUniformDirectionSphere();
-    Vec3<double> getRandomUniformDirectionHemisphere(const Vec3<double>& normal);
+    Vec3<double> getRandomUniformDirectionSphere() const;
+    Vec3<double> getRandomUniformDirectionHemisphere(const Vec3<double>& normal) const;
     // Cosine-biased hemisphere distribution.
     // This means low-angle diffuse reflections don't need scaled down, instead they are just sampled less.
-    Vec3<double> getRandomBiasedDirectionHemisphere(const Vec3<double>& normal);
+    Vec3<double> getRandomBiasedDirectionHemisphere(const Vec3<double>& normal) const;
 
 private:
     unsigned int sampleCount, maxSamples, maxBounces;
@@ -56,10 +57,7 @@ private:
 
     Scene& scene;
 
-    std::mt19937 randomEngine;
-    std::uniform_real_distribution<double> unitDistribution;
-    std::uniform_real_distribution<double> trigDistribution;
-    std::uniform_real_distribution<double> angleDistribution;
+    std::shared_ptr<RandomGenerator> randomGenerator;
 };
 
 
