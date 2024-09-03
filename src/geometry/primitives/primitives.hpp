@@ -11,13 +11,10 @@ Wrapper header for primitive geometric shapes, and useful definitions for workin
 #include <concepts>
 #include <type_traits>
 
+#include "primitive.hpp"
 #include "plane.hpp"
 #include "sphere.hpp"
 
-
-// A variant type wrapping all primitives.
-template<Vec3Basis T>
-using Primitive = std::variant<Plane<T>, Sphere<T>>;
 
 // A way to create a type constraint for a specialization of a template.
 template<template<typename> class Template, typename T>
@@ -28,7 +25,7 @@ struct is_specialization_of<Template, Template<T>> : std::true_type { };
 
 // All primitives implement HitInfo intersectRay(const Ray& ray).
 template<typename T>
-concept isPrimitive = is_specialization_of<Plane, T>::value || is_specialization_of<Sphere, T>::value;
+concept isPrimitive = std::derived_from<Primitive, T>;
 
 
 #endif

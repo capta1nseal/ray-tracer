@@ -19,7 +19,7 @@ public:
 
 private:
     Scene scene;
-    Camera<double> camera;
+    Camera camera;
     RayTracer rayTracer;
 
     void initializeScene();

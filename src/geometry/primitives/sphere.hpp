@@ -2,7 +2,10 @@
 #define _RAYTRACERSPHERE_
 
 
+#include "primitive.hpp"
+
 #include <cmath>
+#include <memory>
 
 #include "../../raymath/raymath.hpp"
 
@@ -10,45 +13,44 @@
 /*
 3D sphere implementation.
 Implements ray intersection.
-Values passed are expected to actually represent numbers.
 */
-template<Vec3Basis T>
-struct Sphere
+struct Sphere : public Primitive
 {
     // Center point of sphere in global coordinates.
-    Vec3<T> center;
+    Vec3<double> center;
 
-    T radius;
+    double radius;
 
-    Sphere(const Vec3<T>& initCenter = {}, T initRadius = T(1.0))
+    Sphere(const Vec3<double>& initCenter = {}, double initRadius = 1.0)
         : center(initCenter), radius(initRadius) {}
-    template<Vec3Basis U> Sphere(const Sphere<U>& other)
-        : center(other.center), radius(other.radius) {}
-
-    template<Vec3Basis U> auto intersectRay(const Ray<U>& ray) const
+    
+    std::unique_ptr<Primitive> clone() const override
     {
-        using ResultType = std::common_type_t<T, U>;
-        
-        HitInfo<ResultType> hitInfo;
+        return std::make_unique<Sphere>(*this);
+    }
 
-        Vec3<ResultType> toCenter = center - ray.origin;
-        ResultType midDistance = toCenter * ray.direction;
+    HitInfo intersectRay(const Ray& ray) const override
+    {
+        HitInfo hitInfo;
+
+        Vec3<double> toCenter = center - ray.origin;
+        double midDistance = toCenter * ray.direction;
 
         // Squared to compare lengths without expensive sqrt.
-        ResultType midDifferenceSquared = toCenter * toCenter - midDistance * midDistance;
-        ResultType radiusSquared = radius * radius;
+        double midDifferenceSquared = toCenter * toCenter - midDistance * midDistance;
+        double radiusSquared = radius * radius;
 
         // Return early if ray doesn't intersect forwards or backwards.
         if (midDifferenceSquared > radiusSquared) return hitInfo;
 
-        ResultType halfDepth = std::sqrt(radiusSquared - midDifferenceSquared);
+        double halfDepth = std::sqrt(radiusSquared - midDifferenceSquared);
 
         // Select entry point if it's in front of the ray origin, otherwise exit point.
         // Tolerance of a picometer to avoid light leaking.
-        hitInfo.distance = (midDistance > halfDepth + ResultType(1.0e-12)) ? midDistance - halfDepth : midDistance + halfDepth;
+        hitInfo.distance = (midDistance > halfDepth + 1.0e-12) ? midDistance - halfDepth : midDistance + halfDepth;
 
         // Treat as non-intersection if ray origin is too close to surface.
-        if (hitInfo.distance <= ResultType(1.0e-12)) return hitInfo;
+        if (hitInfo.distance <= 1.0e-12) return hitInfo;
 
         hitInfo.didHit = true;
         hitInfo.hitPoint = ray.origin + hitInfo.distance * ray.direction;

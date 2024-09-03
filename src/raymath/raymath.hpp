@@ -4,7 +4,6 @@
 
 /*
 Wrapper header for all ray math headers.
-Headers in this directory shouldn't include other headers from this project outside this directory, to avoid cross-inclusion issues.
 */
 
 
