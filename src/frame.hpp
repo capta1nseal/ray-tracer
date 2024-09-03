@@ -21,6 +21,7 @@ public:
     Frame(unsigned int initWidth, unsigned int initHeight);
 
     void addSample(unsigned int x, unsigned int y, const Vec3<double>& newValue);
+    void addRow(unsigned int y, const std::vector<Vec3<double>>& newRow);
     
     Vec3<double> at(unsigned int x, unsigned int y) const;
 

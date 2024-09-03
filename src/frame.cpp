@@ -28,6 +28,16 @@ void Frame::addSample(unsigned int x, unsigned int y, const Vec3<double>& newVal
     additionCountBuffer[y * width + x]++;
     frame[y * width + x] += newValue;
 }
+void Frame::addRow(unsigned int y, const std::vector<Vec3<double>>& newRow)
+{
+    if (newRow.size() > width or y > height - 1) return;
+
+    for (unsigned int x = 0u; x < width; x++)
+    {
+        additionCountBuffer[y * width + x]++;
+        frame[y * width + x] += newRow[x];
+    }
+}
 
 Vec3<double> Frame::at(unsigned int x, unsigned int y) const
 {
