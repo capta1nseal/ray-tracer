@@ -7,7 +7,6 @@
 #include "frame.hpp"
 #include "scene.hpp"
 #include "camera.hpp"
-#include "geometry/primitiveintersector.hpp"
 #include "raymath/raymath.hpp"
 #include "material.hpp"
 
@@ -18,10 +17,10 @@ Wrapper class for ray bouncing, sample generation and ray-traced rendering.
 class RayTracer
 {
 public:
-    RayTracer(Scene& initScene, Camera<double>& initCamera);
+    RayTracer(Scene& initScene, Camera& initCamera);
 
     // Run whenever anything about camera changed, or the camera changes completely.
-    void setCamera(Camera<double>& newCamera);
+    void setCamera(Camera& newCamera);
 
     // Set new maximum number of samples per pixel.
     // Does not affect image generated, but may stop its render immediately if decreased.
@@ -33,7 +32,7 @@ public:
 
     // Sample incoming light from given ray's direction to its origin.
     // Will terminate path if depthLeft reaches 0.
-    Vec3<double> traceRay(Ray<double> ray, unsigned int depthLeft);
+    Vec3<double> traceRay(Ray ray, unsigned int depthLeft);
 
     // Generate outgoing ray direction based on incoming ray, surface normal and material properties.
     Vec3<double> bounceDirection(const Vec3<double>& incomingRay, const Vec3<double>& normal, bool isSpecularBounce, double materialSmoothness);
@@ -52,12 +51,10 @@ public:
 private:
     unsigned int sampleCount, maxSamples, maxBounces;
 
-    Camera<double>& camera;
+    Camera& camera;
     Frame frame;
 
     Scene& scene;
-
-    PrimitiveIntersector<double> primitiveIntersector;
 
     std::mt19937 randomEngine;
     std::uniform_real_distribution<double> unitDistribution;

@@ -6,12 +6,11 @@
 #include "frame.hpp"
 #include "scene.hpp"
 #include "camera.hpp"
-#include "geometry/primitiveintersector.hpp"
 #include "raymath/raymath.hpp"
 #include "material.hpp"
 
 
-RayTracer::RayTracer(Scene& initScene, Camera<double>& initCamera)
+RayTracer::RayTracer(Scene& initScene, Camera& initCamera)
     : camera(initCamera),
     frame(initCamera.getWidth(), initCamera.getHeight()),
     scene(initScene),
@@ -23,7 +22,7 @@ RayTracer::RayTracer(Scene& initScene, Camera<double>& initCamera)
     maxBounces = 12;
 }
 
-void RayTracer::setCamera(Camera<double>& newCamera)
+void RayTracer::setCamera(Camera& newCamera)
 {
     camera = newCamera;
     frame = Frame(camera.getWidth(), camera.getHeight());
@@ -39,9 +38,9 @@ void RayTracer::sampleFrame()
 {
     sampleCount++;
 
-    Ray<double> cameraRay;
-    HitInfo<double> hitInfo;
-    HitInfo<double> nearestHitInfo;
+    Ray cameraRay;
+    HitInfo hitInfo;
+    HitInfo nearestHitInfo;
 
 
     unsigned int width = frame.getWidth();
@@ -58,20 +57,20 @@ void RayTracer::sampleFrame()
     }
 }
 
-Vec3<double> RayTracer::traceRay(Ray<double> ray, unsigned int depthLeft)
+Vec3<double> RayTracer::traceRay(Ray ray, unsigned int depthLeft)
 {
-    HitInfo<double> hitInfo, nearestHitInfo = {};
+    HitInfo hitInfo, nearestHitInfo = {};
 
     for (const auto& primitiveObject : scene.getPrimitiveObjects())
     {
-        hitInfo = std::visit(primitiveIntersector.with(&ray), primitiveObject.getPrimitive());
+        hitInfo = primitiveObject.primitive->intersectRay(ray);
 
         if (hitInfo.didHit)
         {
             if (nearestHitInfo.didHit == false or hitInfo.distance < nearestHitInfo.distance)
             {
                 nearestHitInfo = hitInfo;
-                nearestHitInfo.material = primitiveObject.getMaterial();
+                nearestHitInfo.material = primitiveObject.material;
             }
         }
     }

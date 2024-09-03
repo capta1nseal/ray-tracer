@@ -23,6 +23,7 @@ RayTracerApplication::RayTracerApplication()
 
 void RayTracerApplication::initializeScene()
 {
+    // TODO move all this code into a scene initializing component. May be a good time to move defined 3D objects into file-based storage.
     Material groundMaterial = {
         {0.3, 0.3, 0.3},
         {0.9, 0.9, 0.9},
@@ -50,7 +51,7 @@ void RayTracerApplication::initializeScene()
         0.0
     };
 
-    scene.addPrimitiveObject(PrimitiveObject<double>(
+    scene.addPrimitiveObject(PrimitiveObject(
         Plane(
             Vec3(-100.0, 0.0, 0.0),
             Vec3(100.0,-100.0, 0.0),
@@ -58,7 +59,7 @@ void RayTracerApplication::initializeScene()
         ),
         groundMaterial
     ));
-    scene.addPrimitiveObject(PrimitiveObject<double>(
+    scene.addPrimitiveObject(PrimitiveObject(
         Plane(
             Vec3(-2.0, 0.0, 0.0),
             Vec3( 2.0, 0.0, 4.0),
@@ -66,7 +67,7 @@ void RayTracerApplication::initializeScene()
         ),
         frameMaterial
     ));
-    scene.addPrimitiveObject(PrimitiveObject<double>(
+    scene.addPrimitiveObject(PrimitiveObject(
         Plane(
             Vec3( 2.0, 0.0, 0.0),
             Vec3(-2.0, 0.0, 4.0),
@@ -74,7 +75,7 @@ void RayTracerApplication::initializeScene()
         ),
         frameMaterial
     ));
-    scene.addPrimitiveObject(PrimitiveObject<double>(
+    scene.addPrimitiveObject(PrimitiveObject(
         Plane(
             Vec3( 0.0,-2.0, 0.0),
             Vec3( 0.0, 2.0, 4.0),
@@ -82,7 +83,7 @@ void RayTracerApplication::initializeScene()
         ),
         frameMaterial
     ));
-    scene.addPrimitiveObject(PrimitiveObject<double>(
+    scene.addPrimitiveObject(PrimitiveObject(
         Plane(
             Vec3( 0.0, 2.0, 0.0),
             Vec3( 0.0,-2.0, 4.0),
@@ -90,7 +91,7 @@ void RayTracerApplication::initializeScene()
         ),
         frameMaterial
     ));
-    scene.addPrimitiveObject(PrimitiveObject<double>(
+    scene.addPrimitiveObject(PrimitiveObject(
         Sphere(
             Vec3(0.0, 0.0, 5.0),
             2.0
@@ -107,7 +108,7 @@ void RayTracerApplication::initializeScene()
 
     for (double angle = 0.0; angle < tau - 0.001; angle += tau * (1.0 / 15.0))
     {
-        scene.addPrimitiveObject(PrimitiveObject<double>(
+        scene.addPrimitiveObject(PrimitiveObject(
             Sphere(
                 sphereCenter + rotateAroundUnit(firstBallDelta, axis, angle),
                 0.75
@@ -124,18 +125,16 @@ void RayTracerApplication::initializeCamera()
     unsigned int terminalWidth = 16;
     unsigned int terminalHeight = 9;
 
-    // Character height defined as constant until it can be dynamically determined.
+    // Relative character height hard-coded. Please use a monospace font.
     double terminalCharHeight = 1.8;
 
-    // Amount to scale up aspect ratio by.
-    // Width in characters is floor(terminalWidth * terminalScale).
-    // Height in characters is floor(terminalHeight * (terminalScale / terminalCharHeight)).
+    // Amount to scale up aspect ratio by for final scale (in units of horizontal character width).
     double terminalScale = 23.63;
 
     terminalWidth *= terminalScale;
     terminalHeight *= terminalScale / terminalCharHeight;
 
-    camera = Camera<double>(
+    camera = Camera(
         Vec3(-17.0, 7.0, 10.0),
         Orientation( M_PI * 0.0, M_PI * -0.11, M_PI * 0.125),
         terminalWidth, terminalHeight,
@@ -167,7 +166,7 @@ void RayTracerApplication::run()
         rayTracer.sampleFrame();
 
         // Draw frame at power of two sample counts for rapid initial noise reduction,
-        // then at frameFrequency interval once it is reached.
+        // then at intervals of frameFrequency once it is first reached.
         if (
             (sampleCount < frameFrequency and isZeroOrPowerOfTwo(sampleCount)) or
             (sampleCount) % frameFrequency == 0

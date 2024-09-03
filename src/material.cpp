@@ -18,7 +18,7 @@ Material::Material(
 
 double Material::sampleNormal(double pitchFactor) const
 {
-    std::atan(smoothness * std::sqrt(pitchFactor / (1.0 - pitchFactor)));
+    return std::atan(smoothness * std::sqrt(pitchFactor / (1.0 - pitchFactor)));
 }
 
 double Material::NDF(double normalPitch) const
