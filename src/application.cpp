@@ -13,9 +13,8 @@
 
 
 RayTracerApplication::RayTracerApplication()
-    : rayTracer(scene, camera)
+    : randomGenerator(std::make_shared<RandomGenerator>(RandomGenerator())), rayTracer(scene, camera, randomGenerator)
 {
-    randomGenerator = std::make_shared<RandomGenerator>(RandomGenerator());
     initializeScene();
     initializeCamera();
     initializeRayTracer();
