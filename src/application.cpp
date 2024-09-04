@@ -145,7 +145,7 @@ void RayTracerApplication::initializeCamera()
 void RayTracerApplication::initializeRayTracer()
 {
     rayTracer.setCamera(camera);
-    rayTracer.setMaxSamples(16384);
+    rayTracer.setMaxSamples(4096);
 }
 
 void RayTracerApplication::run()

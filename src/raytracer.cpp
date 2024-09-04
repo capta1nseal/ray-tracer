@@ -72,18 +72,13 @@ void RayTracer::sampleFrame()
 
     workQueue.queueTasks(frame.getHeight());
 
-    std::vector<std::thread> threads;
+    std::vector<std::jthread> threads;
 
     unsigned int threadCount = std::thread::hardware_concurrency();
 
     for (unsigned int i = 0u; i < threadCount; i++)
     {
-        threads.push_back(std::thread(&RayTracer::rowSampler, this, &workQueue));
-    }
-
-    for (unsigned int i = 0u; i < threadCount; i++)
-    {
-        threads[i].join();
+        threads.push_back(std::jthread(&RayTracer::rowSampler, this, &workQueue));
     }
 }
 
