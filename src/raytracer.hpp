@@ -10,6 +10,8 @@
 #include "camera.hpp"
 #include "raymath/raymath.hpp"
 #include "material.hpp"
+#include "randomgenerator.hpp"
+#include "workqueue.hpp"
 
 
 /*
@@ -26,6 +28,8 @@ public:
     // Set new maximum number of samples per pixel.
     // Does not affect image generated, but may stop its render immediately if decreased.
     void setMaxSamples(unsigned int newMaxSamples);
+
+    void rowSampler(WorkQueue* workQueue);
 
     // Generates at least one sample per pixel.
     // May generate additional samples through importance sampling.
