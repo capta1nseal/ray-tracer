@@ -20,13 +20,13 @@ class Frame
 public:
     Frame(unsigned int initWidth, unsigned int initHeight);
 
+    unsigned int getWidth() const { return width; }
+    unsigned int getHeight() const { return height; }
+
     void addSample(unsigned int x, unsigned int y, const Vec3<double>& newValue);
     void addRow(unsigned int y, const std::vector<Vec3<double>>& newRow);
     
     Vec3<double> at(unsigned int x, unsigned int y) const;
-
-    unsigned int getWidth() const { return width; }
-    unsigned int getHeight() const { return height; }
 
 private:
     unsigned int width, height;
