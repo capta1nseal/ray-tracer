@@ -3,12 +3,15 @@
 
 #include <random>
 #include <memory>
+#include <thread>
 
 #include "frame.hpp"
 #include "scene.hpp"
 #include "camera.hpp"
 #include "raymath/raymath.hpp"
 #include "material.hpp"
+#include "randomgenerator.hpp"
+#include "workqueue.hpp"
 
 
 RayTracer::RayTracer(Scene& initScene, Camera& initCamera, const std::shared_ptr<RandomGenerator>& prandomGenerator)
@@ -34,6 +37,33 @@ void RayTracer::setMaxSamples(unsigned int newMaxSamples)
     maxSamples = newMaxSamples;
 }
 
+void RayTracer::rowSampler(WorkQueue* workQueue)
+{
+    int y = workQueue->getTask();
+
+    unsigned int width = frame.getWidth();
+
+    std::vector<Vec3<double>> rowValues(width, Vec3(0.0,0.0,0.0));
+
+    while (y != -1)
+    {
+        for (unsigned int x = 0; x < width; x++)
+        {
+            frame.addSample(
+                x, y,
+                traceRay(
+                    camera.getRandomRayToPixel(x, y),
+                    maxBounces
+                )
+            );
+        }
+
+        y = workQueue->getTask();
+    }
+
+    return;
+}
+
 void RayTracer::sampleFrame()
 {
     sampleCount++;
@@ -46,15 +76,33 @@ void RayTracer::sampleFrame()
     unsigned int width = frame.getWidth();
     unsigned int height = frame.getHeight();
 
-    for (unsigned int x = 0; x < width; x++)
-    {
-        for (unsigned int y = 0; y < height; y++)
-        {
-            cameraRay = camera.getRayToSubPixel(x + randomGenerator->randomLinearUnit(), y + randomGenerator->randomLinearUnit());
+    WorkQueue workQueue = WorkQueue();
 
-            frame.addSample(x, y, traceRay(cameraRay, maxBounces));
-        }
+    workQueue.queueTasks(height);
+
+    std::vector<std::thread> threads;
+
+    unsigned int threadCount = std::thread::hardware_concurrency();
+
+    for (unsigned int i = 0u; i < threadCount; i++)
+    {
+        threads.push_back(std::thread(&RayTracer::rowSampler, this, &workQueue));
     }
+
+    for (unsigned int i = 0u; i < threadCount; i++)
+    {
+        threads[i].join();
+    }
+
+    //for (unsigned int x = 0; x < width; x++)
+    //{
+    //    for (unsigned int y = 0; y < height; y++)
+    //    {
+    //        cameraRay = camera.getRayToSubPixel(x + randomGenerator->randomLinearUnit(), y + randomGenerator->randomLinearUnit());
+    //
+    //        frame.addSample(x, y, traceRay(cameraRay, maxBounces));
+    //    }
+    //}
 }
 
 Vec3<double> RayTracer::traceRay(Ray ray, unsigned int depthLeft) const
