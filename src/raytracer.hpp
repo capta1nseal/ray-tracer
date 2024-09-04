@@ -29,10 +29,12 @@ public:
     // Does not affect image generated, but may stop its render immediately if decreased.
     void setMaxSamples(unsigned int newMaxSamples);
 
+    // For use with a WorkQueue, preferably multithreaded
     void rowSampler(WorkQueue* workQueue);
 
     // Generates at least one sample per pixel.
     // May generate additional samples through importance sampling.
+    // Spawns multiple rowSampler threads that share a WorkQueue.
     void sampleFrame();
 
     // Sample incoming light from given ray's direction to its origin.

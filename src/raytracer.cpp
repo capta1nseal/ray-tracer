@@ -68,17 +68,9 @@ void RayTracer::sampleFrame()
 {
     sampleCount++;
 
-    Ray cameraRay;
-    HitInfo hitInfo;
-    HitInfo nearestHitInfo;
-
-
-    unsigned int width = frame.getWidth();
-    unsigned int height = frame.getHeight();
-
     WorkQueue workQueue = WorkQueue();
 
-    workQueue.queueTasks(height);
+    workQueue.queueTasks(frame.getHeight());
 
     std::vector<std::thread> threads;
 
@@ -93,16 +85,6 @@ void RayTracer::sampleFrame()
     {
         threads[i].join();
     }
-
-    //for (unsigned int x = 0; x < width; x++)
-    //{
-    //    for (unsigned int y = 0; y < height; y++)
-    //    {
-    //        cameraRay = camera.getRayToSubPixel(x + randomGenerator->randomLinearUnit(), y + randomGenerator->randomLinearUnit());
-    //
-    //        frame.addSample(x, y, traceRay(cameraRay, maxBounces));
-    //    }
-    //}
 }
 
 Vec3<double> RayTracer::traceRay(Ray ray, unsigned int depthLeft) const
