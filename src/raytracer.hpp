@@ -4,6 +4,7 @@
 
 #include <random>
 #include <memory>
+#include <thread>
 
 #include "frame.hpp"
 #include "scene.hpp"
@@ -29,8 +30,8 @@ public:
     // Does not affect image generated, but may stop its render immediately if decreased.
     void setMaxSamples(unsigned int newMaxSamples);
 
-    // For use with a WorkQueue, preferably multithreaded
-    void rowSampler(WorkQueue* workQueue);
+    // Worker for threaded sampling, one row at a time.
+    void rowSampler();
 
     // Generates at least one sample per pixel.
     // May generate additional samples through importance sampling.
@@ -64,6 +65,10 @@ private:
     Scene& scene;
 
     std::shared_ptr<RandomGenerator> randomGenerator;
+
+    WorkQueue workQueue;
+    unsigned int threadCount;
+    std::vector<std::jthread> threads;
 };
 
 

@@ -23,6 +23,8 @@ RayTracer::RayTracer(Scene& initScene, Camera& initCamera, const std::shared_ptr
     sampleCount = 0;
     maxSamples = 4096;
     maxBounces = 12;
+
+    threadCount = std::thread::hardware_concurrency();
 }
 
 void RayTracer::setCamera(Camera& newCamera)
@@ -30,6 +32,13 @@ void RayTracer::setCamera(Camera& newCamera)
     camera = newCamera;
     frame = Frame(camera.getWidth(), camera.getHeight());
     sampleCount = 0;
+
+    workQueue.setTaskCount(frame.getHeight());
+
+    for (unsigned int i = 0u; i < threadCount; i++)
+    {
+        threads.emplace_back(std::jthread(&RayTracer::rowSampler, this));
+    }
 }
 
 void RayTracer::setMaxSamples(unsigned int newMaxSamples)
@@ -37,28 +46,32 @@ void RayTracer::setMaxSamples(unsigned int newMaxSamples)
     maxSamples = newMaxSamples;
 }
 
-void RayTracer::rowSampler(WorkQueue* workQueue)
+void RayTracer::rowSampler()
 {
-    int y = workQueue->getTask();
-
     unsigned int width = frame.getWidth();
 
     std::vector<Vec3<double>> rowValues(width, Vec3(0.0,0.0,0.0));
 
-    while (y != -1)
+    while (true)
     {
-        for (unsigned int x = 0; x < width; x++)
+        workQueue.waitForWork();
+
+        int y = workQueue.getTask();
+
+        while (y != -1)
         {
-            frame.addSample(
-                x, y,
-                traceRay(
+            for (unsigned int x = 0; x < width; x++)
+            {
+                rowValues[x] = traceRay(
                     camera.getRandomRayToPixel(x, y),
                     maxBounces
-                )
-            );
-        }
+                );
+            }
 
-        y = workQueue->getTask();
+            frame.addRow(y, rowValues);
+
+            y = workQueue.getTask();
+        }
     }
 
     return;
@@ -68,18 +81,9 @@ void RayTracer::sampleFrame()
 {
     sampleCount++;
 
-    WorkQueue workQueue = WorkQueue();
+    workQueue.queueRepetitions(1u);
 
-    workQueue.queueTasks(frame.getHeight());
-
-    std::vector<std::jthread> threads;
-
-    unsigned int threadCount = std::thread::hardware_concurrency();
-
-    for (unsigned int i = 0u; i < threadCount; i++)
-    {
-        threads.push_back(std::jthread(&RayTracer::rowSampler, this, &workQueue));
-    }
+    workQueue.waitTillDone();
 }
 
 Vec3<double> RayTracer::traceRay(Ray ray, unsigned int depthLeft) const
