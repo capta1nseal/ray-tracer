@@ -39,9 +39,7 @@ void RayTracer::setMaxSamples(unsigned int newMaxSamples)
 
 void RayTracer::rowSampler(WorkQueue* workQueue)
 {
-    int y = workQueue->getTask();
-
-    unsigned int width = frame.getWidth();
+    auto [y, width] = workQueue->getTask();
 
     std::vector<Vec3<double>> rowValues(width, Vec3(0.0,0.0,0.0));
 
@@ -58,7 +56,7 @@ void RayTracer::rowSampler(WorkQueue* workQueue)
             );
         }
 
-        y = workQueue->getTask();
+        std::tie(y, width) = workQueue->getTask();
     }
 
     return;
@@ -70,7 +68,9 @@ void RayTracer::sampleFrame()
 
     WorkQueue workQueue = WorkQueue();
 
-    workQueue.queueTasks(frame.getHeight());
+    workQueue.setTaskCount(frame.getHeight());
+
+    workQueue.setTaskLength(frame.getWidth());
 
     std::vector<std::jthread> threads;
 
