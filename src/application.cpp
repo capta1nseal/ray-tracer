@@ -68,35 +68,23 @@ void RayTracerApplication::initializeCamera() {
     // Define terminal aspect ratio, then scale to full resolution taking
     // character height into account.
 
-    unsigned int terminalWidth = 16;
-    unsigned int terminalHeight = 9;
+    unsigned int imageWidth = 640;
+    unsigned int imageHeight = 480;
 
-    // Relative character height hard-coded. Please use a monospace font.
-    double terminalCharHeight = 2.0;
-
-    // Amount to scale up aspect ratio by for final scale (in units of
-    // horizontal character width).
-    double terminalScale = 23.4;
-
-    terminalWidth *= terminalScale;
-    terminalHeight *= terminalScale / terminalCharHeight;
-
-    camera = Camera(Vec3(-17.0, 7.0, 10.0),
-                    Orientation(M_PI * 0.0, M_PI * -0.11, M_PI * 0.125),
-                    terminalWidth, terminalHeight, 45.0 * M_PI / 180.0,
-                    terminalCharHeight, randomGenerator);
+    camera =
+        Camera(Vec3(-17.0, 7.0, 10.0),
+               Orientation(M_PI * 0.0, M_PI * -0.11, M_PI * 0.125), imageWidth,
+               imageHeight, 45.0 * M_PI / 180.0, randomGenerator);
 }
 
 void RayTracerApplication::initializeRayTracer() {
     rayTracer.setCamera(camera);
-    rayTracer.setMaxSamples(4096);
+    rayTracer.setMaxSamples(512);
 }
 
 void RayTracerApplication::run() {
     auto clock = std::chrono::steady_clock();
     auto start = clock.now();
-
-    unsigned int frameFrequency = 128;
 
     const unsigned int &sampleCount = rayTracer.getSampleCount();
     const unsigned int &maxSamples = rayTracer.getMaxSamples();
@@ -107,21 +95,12 @@ void RayTracerApplication::run() {
     while (running) {
         rayTracer.sampleFrame();
 
-        // Draw frame at power of two sample counts for rapid initial noise
-        // reduction, then at intervals of frameFrequency once it is first
-        // reached.
-        if ((sampleCount < frameFrequency and
-             isZeroOrPowerOfTwo(sampleCount)) or
-            (sampleCount) % frameFrequency == 0)
-            std::cout << rayTracer.getFrame();
-
         if (sampleCount >= maxSamples)
             running = false;
     }
 
-    // Ensure that the final image gets displayed,
-    // mostly for cases where maxSamples % frameFrequency != 0.
-    std::cout << rayTracer.getFrame();
+    // Write result to a file.
+    rayTracer.getFrame().writeToFile("testoutfile.png");
 
     auto meanSampleDuration = (clock.now() - start).count() /
                               static_cast<double>(rayTracer.getSampleCount());

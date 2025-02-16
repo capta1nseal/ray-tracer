@@ -6,6 +6,8 @@
 #include <string>
 #include <vector>
 
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include "include/stb_image_write.h"
 #include "raymath/vec3.hpp"
 
 Frame::Frame(unsigned int initWidth, unsigned int initHeight)
@@ -42,6 +44,27 @@ Vec3<double> Frame::at(unsigned int x, unsigned int y) const {
         return {0.0, 0.0, 0.0};
     return frame[y * width + x] * 1.0 /
            static_cast<double>(additionCountBuffer[y * width + x]);
+}
+
+void Frame::writeToFile(std::string filePath) const {
+    std::vector<unsigned char> imageBuffer;
+
+    Vec3<double> colourValue;
+
+    for (unsigned int y = height - 1; y < height; y--) {
+        for (unsigned int x = 0; x < width; x++) {
+            colourValue = at(x, y);
+            imageBuffer.push_back(static_cast<unsigned char>(
+                std::min(colourValue.x * 255, 255.0)));
+            imageBuffer.push_back(static_cast<unsigned char>(
+                std::min(colourValue.y * 255, 255.0)));
+            imageBuffer.push_back(static_cast<unsigned char>(
+                std::min(colourValue.z * 255, 255.0)));
+        }
+    }
+
+    stbi_write_png(filePath.c_str(), width, height, 3, imageBuffer.data(),
+                   width * 3);
 }
 
 std::string asString(int number) {

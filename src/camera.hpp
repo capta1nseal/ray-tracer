@@ -10,8 +10,6 @@
 /*
 Wrapper for camera's spatial positioning and lens values.
 Creates a plane upon initialization that makes projecting rays very easy.
-relativePixelHeight parameter is intended to be used only when pixels are
-non-square rectangles.
 */
 class Camera {
 public:
@@ -19,7 +17,6 @@ public:
            const Orientation<double> &initOrientation = {},
            unsigned int initWidth = 16, unsigned int initHeight = 9,
            double initHorizontalFOV = 49.0 * M_PI / 180.0,
-           double relativePixelHeight = 1.0,
            const std::shared_ptr<RandomGenerator> &prandomGenerator = {}) {
         if (initWidth == 0)
             initWidth = 1;
@@ -28,8 +25,6 @@ public:
 
         if (!std::isnormal(initHorizontalFOV) or initHorizontalFOV <= 0.0)
             initHorizontalFOV = 49.0 * M_PI / 180.0;
-        if (!std::isnormal(relativePixelHeight) or relativePixelHeight <= 0.0)
-            relativePixelHeight = 1.0;
 
         position = initPosition;
         orientation = initOrientation;
@@ -37,7 +32,7 @@ public:
         width = initWidth;
         height = initHeight;
 
-        aspectRatio = double(width) / (double(height) * relativePixelHeight);
+        aspectRatio = double(width) / double(height);
 
         horizontalFOV = initHorizontalFOV;
         verticalFOV = initHorizontalFOV / aspectRatio;

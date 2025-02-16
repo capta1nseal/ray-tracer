@@ -2,12 +2,13 @@
 #define _RAYTRACERFRAME_
 
 #include <ostream>
+#include <string>
 #include <vector>
 
 #include "raymath/vec3.hpp"
 
 /*
-Basic colour storage class.
+Basic frame pixel colour storage class.
 Stores one std::vector<Vec3<double>> that is a sum of all colours added per
 pixel, and a partner std::vector<unsigned int> of addition counts. Using at(x,y)
 divides that value by a count of additions, so the storage appears to be
@@ -26,6 +27,8 @@ public:
     void addRow(unsigned int y, const std::vector<Vec3<double>> &newRow);
 
     Vec3<double> at(unsigned int x, unsigned int y) const;
+
+    void writeToFile(std::string filePath) const;
 
 private:
     unsigned int width, height;
