@@ -69,7 +69,7 @@ void RayTracerApplication::initializeCamera() {
     // character height into account.
 
     unsigned int imageWidth = 640;
-    unsigned int imageHeight = 480;
+    unsigned int imageHeight = 360;
 
     camera =
         Camera(Vec3(-17.0, 7.0, 10.0),
