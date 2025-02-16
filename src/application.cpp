@@ -28,7 +28,7 @@ void RayTracerApplication::initializeScene() {
         {0.5, 0.6, 0.3}, {0.85, 0.85, 0.85}, {1.0, 1.0, 1.0}, 0.3, 0.67, 0.0});
 
     auto ballMaterial = materialLibrary.addMaterial(Material{
-        {0.6, 0.3, 0.7}, {0.7, 0.4, 0.8}, {1.0, 1.0, 1.0}, 0.95, 0.9, 0.0});
+        {0.6, 0.3, 0.7}, {0.7, 0.4, 0.8}, {1.0, 1.0, 1.0}, 1.0, 1.0, 0.0});
 
     scene.addPrimitiveObject(
         PrimitiveObject(Plane(Vec3(-100.0, 0.0, 0.0), Vec3(100.0, -100.0, 0.0),
@@ -79,7 +79,7 @@ void RayTracerApplication::initializeCamera() {
 
 void RayTracerApplication::initializeRayTracer() {
     rayTracer.setCamera(camera);
-    rayTracer.setMaxSamples(512);
+    rayTracer.setMaxSamples(4096);
 }
 
 void RayTracerApplication::run() {
