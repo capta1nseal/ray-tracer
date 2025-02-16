@@ -1,21 +1,18 @@
 #ifndef _RAYTRACERAPPLICATION_
 #define _RAYTRACERAPPLICATION_
 
-
 #include <memory>
 
-#include "randomgenerator.hpp"
-#include "scene.hpp"
 #include "camera.hpp"
-#include "raytracer.hpp"
 #include "materiallibrary.hpp"
-
+#include "randomgenerator.hpp"
+#include "raytracer.hpp"
+#include "scene.hpp"
 
 /*
 A wrapper class initializing and facilitating the execution of the program.
 */
-class RayTracerApplication
-{
+class RayTracerApplication {
 public:
     RayTracerApplication();
 
@@ -32,6 +29,5 @@ private:
     void initializeCamera();
     void initializeRayTracer();
 };
-
 
 #endif

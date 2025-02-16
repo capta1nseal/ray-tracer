@@ -1,60 +1,46 @@
 #include "raytracer.hpp"
 
-
 #include <iostream>
-#include <random>
 #include <memory>
+#include <random>
 #include <thread>
 
-#include "frame.hpp"
-#include "scene.hpp"
 #include "camera.hpp"
-#include "raymath/raymath.hpp"
+#include "frame.hpp"
 #include "material.hpp"
 #include "randomgenerator.hpp"
+#include "raymath/raymath.hpp"
+#include "scene.hpp"
 #include "workqueue.hpp"
 
-
-RayTracer::RayTracer(Scene& initScene, Camera& initCamera, const std::shared_ptr<RandomGenerator>& prandomGenerator)
-    : camera(initCamera),
-    frame(initCamera.getWidth(), initCamera.getHeight()),
-    scene(initScene),
-    randomGenerator(prandomGenerator)
-{
+RayTracer::RayTracer(Scene &initScene, Camera &initCamera,
+                     const std::shared_ptr<RandomGenerator> &prandomGenerator)
+    : camera(initCamera), frame(initCamera.getWidth(), initCamera.getHeight()),
+      scene(initScene), randomGenerator(prandomGenerator) {
     sampleCount = 0;
     maxSamples = 4096;
     maxBounces = 12;
 }
 
-void RayTracer::setCamera(Camera& newCamera)
-{
+void RayTracer::setCamera(Camera &newCamera) {
     camera = newCamera;
     frame = Frame(camera.getWidth(), camera.getHeight());
     sampleCount = 0;
 }
 
-void RayTracer::setMaxSamples(unsigned int newMaxSamples)
-{
+void RayTracer::setMaxSamples(unsigned int newMaxSamples) {
     maxSamples = newMaxSamples;
 }
 
-void RayTracer::rowSampler(WorkQueue* workQueue)
-{
+void RayTracer::rowSampler(WorkQueue *workQueue) {
     auto [y, width] = workQueue->getTask();
 
-    std::vector<Vec3<double>> rowValues(width, Vec3(0.0,0.0,0.0));
+    std::vector<Vec3<double>> rowValues(width, Vec3(0.0, 0.0, 0.0));
 
-    while (y != -1)
-    {
-        for (unsigned int x = 0; x < width; x++)
-        {
+    while (y != -1) {
+        for (unsigned int x = 0; x < width; x++) {
             frame.addSample(
-                x, y,
-                traceRay(
-                    camera.getRandomRayToPixel(x, y),
-                    maxBounces
-                )
-            );
+                x, y, traceRay(camera.getRandomRayToPixel(x, y), maxBounces));
         }
 
         std::tie(y, width) = workQueue->getTask();
@@ -63,8 +49,7 @@ void RayTracer::rowSampler(WorkQueue* workQueue)
     return;
 }
 
-void RayTracer::sampleFrame()
-{
+void RayTracer::sampleFrame() {
     sampleCount++;
 
     WorkQueue workQueue = WorkQueue();
@@ -77,93 +62,85 @@ void RayTracer::sampleFrame()
 
     unsigned int threadCount = std::thread::hardware_concurrency();
 
-    for (unsigned int i = 0u; i < threadCount; i++)
-    {
-        threads.push_back(std::jthread(&RayTracer::rowSampler, this, &workQueue));
+    for (unsigned int i = 0u; i < threadCount; i++) {
+        threads.push_back(
+            std::jthread(&RayTracer::rowSampler, this, &workQueue));
     }
 }
 
-Vec3<double> RayTracer::traceRay(Ray ray, unsigned int depthLeft) const
-{
+Vec3<double> RayTracer::traceRay(Ray ray, unsigned int depthLeft) const {
     HitInfo hitInfo, nearestHitInfo = {};
 
-    for (const auto& primitiveObject : scene.getPrimitiveObjects())
-    {
+    for (const auto &primitiveObject : scene.getPrimitiveObjects()) {
         hitInfo = primitiveObject.primitive->intersectRay(ray);
 
-        if (hitInfo.didHit)
-        {
-            if (nearestHitInfo.didHit == false or hitInfo.distance < nearestHitInfo.distance)
-            {
+        if (hitInfo.didHit) {
+            if (nearestHitInfo.didHit == false or
+                hitInfo.distance < nearestHitInfo.distance) {
                 nearestHitInfo = hitInfo;
                 nearestHitInfo.material = primitiveObject.material;
             }
         }
     }
 
-    if (nearestHitInfo.didHit)
-    {
-        Vec3<double> emittedLight = nearestHitInfo.material->emissionColor * nearestHitInfo.material->emissionStrength;
+    if (nearestHitInfo.didHit) {
+        Vec3<double> emittedLight = nearestHitInfo.material->emissionColor *
+                                    nearestHitInfo.material->emissionStrength;
 
-        if (depthLeft == 0u) return emittedLight;
+        if (depthLeft == 0u)
+            return emittedLight;
 
-        bool isSpecularBounce = nearestHitInfo.material->specularProbability >= randomGenerator->randomLinearUnit();
+        bool isSpecularBounce = nearestHitInfo.material->specularProbability >=
+                                randomGenerator->randomLinearUnit();
 
-        return emittedLight + multiplyElements(
-            traceRay(
-                Ray(
-                    nearestHitInfo.hitPoint,
-                    bounceDirection(ray.direction, nearestHitInfo.normal, isSpecularBounce, nearestHitInfo.material->smoothness)
-                ),
-                depthLeft - 1
-            ),
-            isSpecularBounce ? nearestHitInfo.material->specularColor : nearestHitInfo.material->color
-        );
-    }
-    else
-    {
+        return emittedLight +
+               multiplyElements(
+                   traceRay(Ray(nearestHitInfo.hitPoint,
+                                bounceDirection(
+                                    ray.direction, nearestHitInfo.normal,
+                                    isSpecularBounce,
+                                    nearestHitInfo.material->smoothness)),
+                            depthLeft - 1),
+                   isSpecularBounce ? nearestHitInfo.material->specularColor
+                                    : nearestHitInfo.material->color);
+    } else {
         return scene.getEnvironmentEmission(ray.direction);
     }
 }
 
-Vec3<double> RayTracer::bounceDirection(const Vec3<double>& incomingRay, const Vec3<double>& normal, bool isSpecularBounce, double materialSmoothness) const
-{
+Vec3<double> RayTracer::bounceDirection(const Vec3<double> &incomingRay,
+                                        const Vec3<double> &normal,
+                                        bool isSpecularBounce,
+                                        double materialSmoothness) const {
     Vec3<double> diffuseDirection = getRandomBiasedDirectionHemisphere(normal);
-    // If the reflection is determined to not be specular, just return diffuse direction.
-    if (!isSpecularBounce) return diffuseDirection;
-    // TODO find out exactly what this simulates, why and how it lines up with reality.
-    return lerp(diffuseDirection, reflect(incomingRay, normal), materialSmoothness).normalized();
+    // If the reflection is determined to not be specular, just return diffuse
+    // direction.
+    if (!isSpecularBounce)
+        return diffuseDirection;
+    // TODO find out exactly what this simulates, why and how it lines up with
+    // reality.
+    return lerp(diffuseDirection, reflect(incomingRay, normal),
+                materialSmoothness)
+        .normalized();
 }
 
+const unsigned int &RayTracer::getSampleCount() const { return sampleCount; }
+const unsigned int &RayTracer::getMaxSamples() const { return maxSamples; }
 
-const unsigned int& RayTracer::getSampleCount() const
-{
-    return sampleCount;
-}
-const unsigned int& RayTracer::getMaxSamples() const
-{
-    return maxSamples;
-}
+const Frame &RayTracer::getFrame() const { return frame; }
 
-const Frame& RayTracer::getFrame() const
-{
-    return frame;
+Vec3<double> RayTracer::getRandomUniformDirectionSphere() const {
+    return Orientation<double>(0.0,
+                               std::asin(randomGenerator->randomLinearTrig()),
+                               randomGenerator->randomLinearAngle())
+        .forward();
 }
-
-Vec3<double> RayTracer::getRandomUniformDirectionSphere() const
-{
-    return Orientation<double>(
-        0.0,
-        std::asin(randomGenerator->randomLinearTrig()),
-        randomGenerator->randomLinearAngle()
-    ).forward();
-}
-Vec3<double> RayTracer::getRandomUniformDirectionHemisphere(const Vec3<double>& normal) const
-{
+Vec3<double> RayTracer::getRandomUniformDirectionHemisphere(
+    const Vec3<double> &normal) const {
     Vec3<double> direction = getRandomUniformDirectionSphere();
     return (normal * direction < 0.0) ? -direction : direction;
 }
-Vec3<double> RayTracer::getRandomBiasedDirectionHemisphere(const Vec3<double>& normal) const
-{
+Vec3<double> RayTracer::getRandomBiasedDirectionHemisphere(
+    const Vec3<double> &normal) const {
     return (getRandomUniformDirectionSphere() + normal).normalized();
 }

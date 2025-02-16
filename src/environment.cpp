@@ -1,13 +1,10 @@
 #include "environment.hpp"
 
-
 #include <cmath>
 
 #include "raymath/vec3.hpp"
 
-
-Environment::Environment()
-{
+Environment::Environment() {
     skyEmissionColor = {0.5, 0.5, 1.0};
     skyEmissionStrength = 1.0;
 
@@ -19,8 +16,7 @@ Environment::Environment()
     cosSunRadius = std::cos(sunRadius);
 }
 
-Vec3<double> Environment::getEmission(const Vec3<double>& direction) const
-{
+Vec3<double> Environment::getEmission(const Vec3<double> &direction) const {
     double skyRayElevation = (direction.z + 1.0) / 2.0;
     // Crude estimation of incoming light from blue sky.
     Vec3<double> emittedLight =
@@ -28,5 +24,7 @@ Vec3<double> Environment::getEmission(const Vec3<double>& direction) const
         std::max(skyRayElevation * skyRayElevation, 0.0);
 
     // If ray points towards sun, add sun's emission to incoming light.
-    return (direction * sunDirection > cosSunRadius) ? emittedLight + sunEmissionColor * sunEmissionStrength : emittedLight;
+    return (direction * sunDirection > cosSunRadius)
+               ? emittedLight + sunEmissionColor * sunEmissionStrength
+               : emittedLight;
 }

@@ -1,12 +1,9 @@
 #ifndef _RAYTRACERRANDOMGENERATOR_
 #define _RAYTRACERRANDOMGENERATOR_
 
-
 #include <random>
 
-
-class RandomGenerator
-{
+class RandomGenerator {
 public:
     RandomGenerator();
     ~RandomGenerator();
@@ -21,6 +18,5 @@ private:
     std::uniform_real_distribution<double> trigDistribution;
     std::uniform_real_distribution<double> angleDistribution;
 };
-
 
 #endif
