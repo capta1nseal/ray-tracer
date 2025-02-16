@@ -8,3 +8,8 @@ dep/
 
 # developer notes
 notes/
+
+# flamegraph output
+flamegraph.svg
+perf.data
+perf.data.old
