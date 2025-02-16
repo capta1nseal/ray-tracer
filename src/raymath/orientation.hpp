@@ -4,6 +4,7 @@
 #include <cmath>
 #include <ostream>
 
+#include "constants.hpp"
 #include "vec3.hpp"
 
 /*

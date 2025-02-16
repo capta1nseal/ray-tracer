@@ -1,8 +1,6 @@
 #ifndef _RAYTRACERUSEFULFUNCTIONS_
 #define _RAYTRACERUSEFULFUNCTIONS_
 
-#include "direction.hpp"
-#include "orientation.hpp"
 #include "vec3.hpp"
 
 /*

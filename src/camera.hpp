@@ -3,11 +3,9 @@
 
 #include <cmath>
 #include <memory>
-#include <random>
 
 #include "geometry/primitives/plane.hpp"
 #include "randomgenerator.hpp"
-#include "raymath/raymath.hpp"
 
 /*
 Wrapper for camera's spatial positioning and lens values.
@@ -20,7 +18,7 @@ public:
     Camera(const Vec3<double> &initPosition = {},
            const Orientation<double> &initOrientation = {},
            unsigned int initWidth = 16, unsigned int initHeight = 9,
-           double initHorizontalFOV = {49.0 * M_PI / 180.0},
+           double initHorizontalFOV = 49.0 * M_PI / 180.0,
            double relativePixelHeight = 1.0,
            const std::shared_ptr<RandomGenerator> &prandomGenerator = {}) {
         if (initWidth == 0)

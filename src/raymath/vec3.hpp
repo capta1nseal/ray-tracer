@@ -2,7 +2,6 @@
 #define _RAYTRACERVEC3_
 
 #include <cmath>
-#include <concepts>
 #include <ostream>
 #include <type_traits>
 

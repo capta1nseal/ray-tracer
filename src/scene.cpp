@@ -2,9 +2,7 @@
 
 #include <vector>
 
-#include "geometry/geometry.hpp"
 #include "primitiveobject.hpp"
-#include "raymath/raymath.hpp"
 
 Scene::Scene() : environment() {}
 

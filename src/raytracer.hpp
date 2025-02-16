@@ -2,13 +2,10 @@
 #define _RAYTRACERRAYTRACER_
 
 #include <memory>
-#include <random>
 
 #include "camera.hpp"
 #include "frame.hpp"
-#include "material.hpp"
 #include "randomgenerator.hpp"
-#include "raymath/raymath.hpp"
 #include "scene.hpp"
 #include "workqueue.hpp"
 

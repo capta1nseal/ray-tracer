@@ -1,15 +1,11 @@
 #include "raytracer.hpp"
 
-#include <iostream>
 #include <memory>
-#include <random>
 #include <thread>
 
 #include "camera.hpp"
 #include "frame.hpp"
-#include "material.hpp"
 #include "randomgenerator.hpp"
-#include "raymath/raymath.hpp"
 #include "scene.hpp"
 #include "workqueue.hpp"
 
@@ -19,7 +15,7 @@ RayTracer::RayTracer(Scene &initScene, Camera &initCamera,
       scene(initScene), randomGenerator(prandomGenerator) {
     sampleCount = 0;
     maxSamples = 4096;
-    maxBounces = 12;
+    maxBounces = 64;
 }
 
 void RayTracer::setCamera(Camera &newCamera) {

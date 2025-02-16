@@ -6,7 +6,6 @@
 #include <string>
 #include <vector>
 
-#include "raymath/usefulfunctions.hpp"
 #include "raymath/vec3.hpp"
 
 Frame::Frame(unsigned int initWidth, unsigned int initHeight)
