@@ -13,7 +13,7 @@ public:
     double randomLinearAngle();
 
 private:
-    std::mt19937 randomEngine;
+    std::minstd_rand randomEngine;
     std::uniform_real_distribution<double> unitDistribution;
     std::uniform_real_distribution<double> trigDistribution;
     std::uniform_real_distribution<double> angleDistribution;
