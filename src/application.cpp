@@ -76,7 +76,7 @@ void RayTracerApplication::initializeCamera() {
 
     // Amount to scale up aspect ratio by for final scale (in units of
     // horizontal character width).
-    double terminalScale = 10.0;
+    double terminalScale = 23.4;
 
     terminalWidth *= terminalScale;
     terminalHeight *= terminalScale / terminalCharHeight;
