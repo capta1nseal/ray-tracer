@@ -8,6 +8,7 @@
 #include "scene.hpp"
 #include "camera.hpp"
 #include "raytracer.hpp"
+#include "materiallibrary.hpp"
 
 
 /*
@@ -22,6 +23,7 @@ public:
 
 private:
     std::shared_ptr<RandomGenerator> randomGenerator;
+    MaterialLibrary materialLibrary;
     Scene scene;
     Camera camera;
     RayTracer rayTracer;

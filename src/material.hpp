@@ -3,7 +3,6 @@
 
 
 #include "raymath/vec3.hpp"
-#include "raymath/direction.hpp"
 
 
 /*
@@ -22,7 +21,7 @@ struct Material
 
     Material(
         Vec3<double> initColor = {0.8, 0.8, 0.8}, Vec3<double> initSpecularColor = {0.8, 0.8, 0.8}, Vec3<double> initEmissionColor = {0.8, 0.8, 0.8},
-        double initSpecularProbability = {0.5}, double initSmoothness = {0.5}, double initEmissionStrength = {0.0}
+        double initSpecularProbability = 0.5, double initSmoothness = 0.5, double initEmissionStrength = 0.0
     );
 
     // Sample a microfacet normal according to the GGX NDF.

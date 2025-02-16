@@ -1,6 +1,7 @@
 #include "raytracer.hpp"
 
 
+#include <iostream>
 #include <random>
 #include <memory>
 #include <thread>
@@ -102,21 +103,21 @@ Vec3<double> RayTracer::traceRay(Ray ray, unsigned int depthLeft) const
 
     if (nearestHitInfo.didHit)
     {
-        Vec3<double> emittedLight = nearestHitInfo.material.emissionColor * nearestHitInfo.material.emissionStrength;
+        Vec3<double> emittedLight = nearestHitInfo.material->emissionColor * nearestHitInfo.material->emissionStrength;
 
         if (depthLeft == 0u) return emittedLight;
 
-        bool isSpecularBounce = nearestHitInfo.material.specularProbability >= randomGenerator->randomLinearUnit();
+        bool isSpecularBounce = nearestHitInfo.material->specularProbability >= randomGenerator->randomLinearUnit();
 
         return emittedLight + multiplyElements(
             traceRay(
                 Ray(
                     nearestHitInfo.hitPoint,
-                    bounceDirection(ray.direction, nearestHitInfo.normal, isSpecularBounce, nearestHitInfo.material.smoothness)
+                    bounceDirection(ray.direction, nearestHitInfo.normal, isSpecularBounce, nearestHitInfo.material->smoothness)
                 ),
                 depthLeft - 1
             ),
-            isSpecularBounce ? nearestHitInfo.material.specularColor : nearestHitInfo.material.color
+            isSpecularBounce ? nearestHitInfo.material->specularColor : nearestHitInfo.material->color
         );
     }
     else

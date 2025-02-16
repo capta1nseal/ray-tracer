@@ -7,7 +7,6 @@ Wrapper header for primitive geometric shapes, and useful definitions for workin
 */
 
 
-#include <variant>
 #include <concepts>
 #include <type_traits>
 

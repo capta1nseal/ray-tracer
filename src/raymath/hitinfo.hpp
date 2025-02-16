@@ -2,6 +2,8 @@
 #define _RAYTRACERHITINFO_
 
 
+#include <memory>
+
 #include "vec3.hpp"
 #include "../material.hpp"
 
@@ -22,7 +24,7 @@ struct HitInfo
     // Normal vector in direction of incoming ray.
     Vec3<double> normal;
     // Holds basic material properties.
-    Material material;
+    std::shared_ptr<Material> material;
 
     HitInfo()
     {

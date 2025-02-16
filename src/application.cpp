@@ -6,7 +6,6 @@
 
 #include "camera.hpp"
 #include "scene.hpp"
-#include "geometry/geometry.hpp"
 #include "material.hpp"
 #include "frame.hpp"
 #include "raymath/usefulfunctions.hpp"
@@ -23,32 +22,33 @@ RayTracerApplication::RayTracerApplication()
 void RayTracerApplication::initializeScene()
 {
     // TODO move all this code into a scene initializing component. May be a good time to move defined 3D objects into file-based storage.
-    Material groundMaterial = {
+
+    auto groundMaterial = materialLibrary.addMaterial(Material{
         {0.3, 0.3, 0.3},
         {0.9, 0.9, 0.9},
         {1.0, 1.0, 1.0},
         0.15,
         0.5,
         0.0
-    };
+    });
 
-    Material frameMaterial = {
+    auto frameMaterial = materialLibrary.addMaterial(Material{
         {0.5, 0.6, 0.3},
         {0.85, 0.85, 0.85},
         {1.0, 1.0, 1.0},
         0.3,
         0.67,
         0.0
-    };
+    });
 
-    Material ballMaterial = {
+    auto ballMaterial = materialLibrary.addMaterial(Material{
         {0.6, 0.3, 0.7},
         {0.7, 0.4, 0.8},
         {1.0, 1.0, 1.0},
         0.95,
         0.9,
         0.0
-    };
+    });
 
     scene.addPrimitiveObject(PrimitiveObject(
         Plane(
@@ -125,10 +125,10 @@ void RayTracerApplication::initializeCamera()
     unsigned int terminalHeight = 9;
 
     // Relative character height hard-coded. Please use a monospace font.
-    double terminalCharHeight = 1.8;
+    double terminalCharHeight = 2.0;
 
     // Amount to scale up aspect ratio by for final scale (in units of horizontal character width).
-    double terminalScale = 31.6;
+    double terminalScale = 10.0;
 
     terminalWidth *= terminalScale;
     terminalHeight *= terminalScale / terminalCharHeight;

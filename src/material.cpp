@@ -4,8 +4,6 @@
 #include <cmath>
 
 #include "raymath/vec3.hpp"
-#include "raymath/direction.hpp"
-#include "raymath/usefulfunctions.hpp"
 #include "raymath/constants.hpp"
 
 
